@@ -9,7 +9,7 @@
 		"preview:database-manager": "nx run @nidoz/database-manager:preview",
 		"dev": "pnpm dev:all",
 		"dev:database-manager": "nx run @nidoz/database-manager:dev",
-		"dev:all": "nx run-many --projects=apps/* --exclude=workers/database-manager --target=dev --parallel 10 --output-style stream",
+		"dev:all": "nx run-many --exclude=workers/database-manager --target=dev --parallel 10 --output-style stream",
 		"d": "pnpm dx && pnpm dev",
 		"dx": "pnpm i && pnpm dx:prepare && pnpx tsx ./scripts/init.env.ts && pnpm dx:up && pnpm db:migrate && pnpm db:seed",
 		"dx:up": "docker compose --env-file .env -f docker/development/compose.yaml up -d",
@@ -26,7 +26,8 @@
 		"lint": "biome lint .",
 		"lint:fix": "biome lint . --fix",
 		"test": "vitest --watch=false",
-		"test:watch": "vitest --watch=true"
+		"test:watch": "vitest --watch=true",
+		"compile:dockerfiles": "./scripts/compile-dockerfiles.sh"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.10",
