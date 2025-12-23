@@ -34,6 +34,7 @@
 		"drizzle-orm": "^0.45.1"
 	},
 	"devDependencies": {
+		"@nidoz/utils": "workspace:*",
 		"drizzle-kit": "^0.31.8",
 		"tsdown": "catalog:",
 		"typescript": "catalog:",

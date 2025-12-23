@@ -66,6 +66,9 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1(@libsql/client@0.15.15)
     devDependencies:
+      '@nidoz/utils':
+        specifier: workspace:*
+        version: link:../utils
       drizzle-kit:
         specifier: ^0.31.8
         version: 0.31.8
