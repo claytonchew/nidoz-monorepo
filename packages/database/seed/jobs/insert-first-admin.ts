@@ -12,6 +12,7 @@ export default defineJob([
 
 		if (existing) {
 			console.info("└── ℹ️ Detected existing admin account, skipping creation.");
+			return;
 		}
 
 		const [admin] = await tx
