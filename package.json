@@ -1,0 +1,52 @@
+{
+	"name": "@nidoz/source",
+	"private": true,
+	"scripts": {
+		"prepare": "husky && pnpm dx:prepare",
+		"preinstall": "npx only-allow pnpm",
+		"build:database-manager": "nx run @nidoz/database-manager:build",
+		"build:packages": "nx run-many --projects=packages/* --target=build --parallel 10 --output-style stream",
+		"preview:database-manager": "nx run @nidoz/database-manager:preview",
+		"dev": "pnpm dev:all",
+		"dev:database-manager": "nx run @nidoz/database-manager:dev",
+		"dev:all": "nx run-many --projects=apps/* --exclude=workers/database-manager --target=dev --parallel 10 --output-style stream",
+		"d": "pnpm dx && pnpm dev",
+		"dx": "pnpm i && pnpm dx:prepare && pnpx tsx ./scripts/init.env.ts && pnpm dx:up && pnpm db:migrate && pnpm db:seed",
+		"dx:up": "docker compose --env-file .env -f docker/development/compose.yaml up -d",
+		"dx:down": "docker compose -f docker/development/compose.yaml down",
+		"dx:prepare": "nx run-many --target=prepare --parallel 10 --output-style stream",
+		"db:studio": "nx run @nidoz/database:db:studio",
+		"db:generate": "nx run @nidoz/database:db:generate",
+		"db:generate:empty": "nx run @nidoz/database:db:generate:empty",
+		"db:migrate": "nx run @nidoz/database:db:migrate",
+		"db:drop": "nx run @nidoz/database:db:drop",
+		"db:deploy": "nx run @nidoz/database:db:deploy",
+		"db:seed": "nx run @nidoz/database:db:seed",
+		"format": "biome format . --write",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint . --fix",
+		"test": "vitest --watch=false",
+		"test:watch": "vitest --watch=true"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.10",
+		"@commitlint/cli": "^20.2.0",
+		"@commitlint/config-conventional": "^20.2.0",
+		"@types/node": "^25.0.3",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.7",
+		"nx": "21.3.10",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	},
+	"workspaces": [
+		"apps/**",
+		"layers/**",
+		"workers/**",
+		"packages/**"
+	],
+	"packageManager": "pnpm@10.13.1",
+	"engines": {
+		"node": ">=22.0.0"
+	}
+}

@@ -1,0 +1,51 @@
+{
+	"name": "@nidoz/database",
+	"private": true,
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.cts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
+		"db:deploy": "drizzle-kit push --verbose --strict --config=drizzle.config.ts",
+		"db:drop": "drizzle-kit drop --config=drizzle.config.ts",
+		"db:generate": "drizzle-kit generate --config=drizzle.config.ts",
+		"db:generate:empty": "drizzle-kit generate --config=drizzle.config.ts --custom",
+		"db:migrate": "drizzle-kit migrate --config=drizzle.config.ts",
+		"db:studio": "drizzle-kit studio --config=drizzle.config.ts",
+		"db:seed": "jiti ./scripts/seed",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"@libsql/client": "^0.15.15",
+		"@paralleldrive/cuid2": "^3.0.4",
+		"dotenv": "^17.2.3",
+		"drizzle-orm": "^0.45.1"
+	},
+	"devDependencies": {
+		"drizzle-kit": "^0.31.8",
+		"tsdown": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
+	},
+	"nx": {
+		"targets": {
+			"build": {
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
+	}
+}
