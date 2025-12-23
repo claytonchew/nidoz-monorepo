@@ -1,0 +1,43 @@
+{
+	"name": "@nidoz/utils",
+	"private": true,
+	"type": "module",
+	"sideEffects": false,
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.cts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"p-limit": "^7.0.0",
+		"throttle-debounce": "5.0.2"
+	},
+	"devDependencies": {
+		"@types/throttle-debounce": "^5.0.2",
+		"typescript": "catalog:",
+		"tsdown": "catalog:",
+		"vitest": "catalog:"
+	},
+	"nx": {
+		"targets": {
+			"build": {
+				"outputs": [
+					"{projectRoot}/dist"
+				]
+			}
+		}
+	}
+}

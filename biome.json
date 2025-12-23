@@ -5,9 +5,6 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"files": {
-		"ignoreUnknown": false
-	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
@@ -15,7 +12,32 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"noNonNullAssertion": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "warn",
+				"noImplicitAnyLet": "warn",
+				"noDuplicateObjectKeys": "warn",
+				"noConfusingVoidType": "off",
+				"useIterableCallbackReturn": "warn"
+			},
+			"performance": {
+				"noDelete": "error",
+				"noAccumulatingSpread": "warn"
+			},
+			"complexity": {
+				"noBannedTypes": "warn",
+				"noUselessSwitchCase": "warn",
+				"noUselessTypeConstraint": "warn"
+			},
+			"correctness": {
+				"noUnusedImports": "warn"
+			},
+			"nursery": {
+				"noMisusedPromises": "error"
+			}
 		}
 	},
 	"html": {
@@ -44,5 +66,26 @@
 				"organizeImports": "on"
 			}
 		}
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/tmp",
+			"!**/out-tsc",
+			"!**/out",
+			"!**/.output",
+			"!**/.data",
+			"!**/.cache",
+			"!**/.source",
+			"!**/.nuxt",
+			"!**/.nitro",
+			"!**/.next",
+			"!**/.svelte-kit",
+			"!**/.nx",
+			"!**/.nuxt"
+		]
 	}
 }
