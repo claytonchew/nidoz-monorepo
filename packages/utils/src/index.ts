@@ -8,6 +8,7 @@ export * from "./is";
 export * from "./math";
 export * from "./object";
 export * from "./p";
+export * from "./password";
 export * from "./promise";
 export * from "./string";
 export * from "./time";

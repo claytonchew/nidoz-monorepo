@@ -22,13 +22,15 @@
 		"test": "vitest"
 	},
 	"dependencies": {
+		"@adonisjs/hash": "^9.1.1",
+		"ohash": "^2.0.11",
 		"p-limit": "^7.0.0",
 		"throttle-debounce": "5.0.2"
 	},
 	"devDependencies": {
 		"@types/throttle-debounce": "^5.0.2",
-		"typescript": "catalog:",
 		"tsdown": "catalog:",
+		"typescript": "catalog:",
 		"vitest": "catalog:"
 	},
 	"nx": {
