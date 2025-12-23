@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { createTursoClient, createTursoSeeder, seedConfig } from "../src/index";
 
-config({ path: ".env" });
+config({ path: ".env", quiet: true });
 const { TURSO_CONNECTION_URL: url, TURSO_AUTH_TOKEN: authToken } = process.env;
 
 if (!url || !authToken) {
