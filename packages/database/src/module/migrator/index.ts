@@ -9,3 +9,5 @@ export function createTursoMigrator(
 		migrate: async () => await migrate(db, { migrationsFolder }),
 	};
 }
+
+export type DrizzleTursoMigrator = ReturnType<typeof createTursoMigrator>;
