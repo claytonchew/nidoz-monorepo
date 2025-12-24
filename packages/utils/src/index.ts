@@ -10,6 +10,7 @@ export * from "./object";
 export * from "./p";
 export * from "./password";
 export * from "./promise";
+export * from "./residential-unit";
 export * from "./string";
 export * from "./time";
 export * from "./types";
