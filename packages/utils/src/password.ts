@@ -1,6 +1,7 @@
 import { Hash } from "@adonisjs/hash";
 import { Scrypt } from "@adonisjs/hash/drivers/scrypt";
 import type { ScryptConfig } from "@adonisjs/hash/types";
+import { customAlphabet } from "nanoid";
 import { hash } from "ohash";
 
 const _hash = /* @__PURE__ */ new Map<string, Hash>();
@@ -46,4 +47,20 @@ export async function verifyPassword(
 	options: ScryptConfig = {},
 ) {
 	return await getHash(options).verify(hashedPassword, plainPassword);
+}
+
+/**
+ * Generate a random numeric code
+ * @param length - The length of the code to generate (default: 8)
+ */
+export function generateRandomCode(length: number = 8) {
+	return customAlphabet("1234567890", length)();
+}
+
+/**
+ * Generate a random password (or token)
+ * @param length - The length of the password to generate (default: 16)
+ */
+export function generateRandomPassword(length: number = 16) {
+	return customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", length)();
 }

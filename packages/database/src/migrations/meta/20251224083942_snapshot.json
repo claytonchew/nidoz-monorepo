@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "b6cf1a05-a755-4745-b7ce-9d1f08947e8a",
+	"id": "cd2471ab-59d4-44ec-b31a-b8e90f9d1ba3",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"admin": {
@@ -41,6 +41,14 @@
 					"primaryKey": false,
 					"notNull": false,
 					"autoincrement": false
+				},
+				"status": {
+					"name": "status",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "'ACTIVE'"
 				},
 				"name": {
 					"name": "name",
@@ -101,8 +109,22 @@
 					"autoincrement": false,
 					"default": "'LOGIN'"
 				},
+				"identifier": {
+					"name": "identifier",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
 				"admin_id": {
 					"name": "admin_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"code": {
+					"name": "code",
 					"type": "text",
 					"primaryKey": false,
 					"notNull": true,
@@ -115,8 +137,8 @@
 					"notNull": true,
 					"autoincrement": false
 				},
-				"expired_at": {
-					"name": "expired_at",
+				"expires_at": {
+					"name": "expires_at",
 					"type": "integer",
 					"primaryKey": false,
 					"notNull": true,
@@ -125,6 +147,13 @@
 				"revoked_at": {
 					"name": "revoked_at",
 					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"revoked_reason": {
+					"name": "revoked_reason",
+					"type": "text",
 					"primaryKey": false,
 					"notNull": false,
 					"autoincrement": false

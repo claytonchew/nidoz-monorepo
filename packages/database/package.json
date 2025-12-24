@@ -30,6 +30,7 @@
 	"dependencies": {
 		"@libsql/client": "^0.15.15",
 		"@paralleldrive/cuid2": "^3.0.4",
+		"defu": "^6.1.4",
 		"dotenv": "^17.2.3",
 		"drizzle-orm": "^0.45.1"
 	},
