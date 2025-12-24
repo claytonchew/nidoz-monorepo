@@ -1,0 +1,25 @@
+{
+	"name": "@nidoz/ui",
+	"private": true,
+	"type": "module",
+	"main": "./nuxt.config.ts",
+	"scripts": {
+		"dev": "nuxi dev .playground",
+		"dev:prepare": "nuxt prepare .playground",
+		"prepare": "nuxt prepare .playground",
+		"build": "nuxt build .playground",
+		"generate": "nuxt generate .playground",
+		"preview": "nuxt preview .playground"
+	},
+	"dependencies": {
+		"@iconify-json/lucide": "^1.2.82",
+		"@iconify-json/simple-icons": "^1.2.63",
+		"@nuxt/ui": "^4.3.0",
+		"nuxt": "catalog:",
+		"tailwindcss": "^4.1.18"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"vue-tsc": "catalog:"
+	}
+}

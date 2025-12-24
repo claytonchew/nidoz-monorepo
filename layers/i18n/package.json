@@ -1,0 +1,22 @@
+{
+	"name": "@nidoz/i18n",
+	"private": true,
+	"type": "module",
+	"main": "./nuxt.config.ts",
+	"scripts": {
+		"dev": "nuxi dev .playground",
+		"dev:prepare": "nuxt prepare .playground",
+		"prepare": "nuxt prepare .playground",
+		"build": "nuxt build .playground",
+		"generate": "nuxt generate .playground",
+		"preview": "nuxt preview .playground"
+	},
+	"dependencies": {
+		"@nuxtjs/i18n": "^10.2.1",
+		"nuxt": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"vue-tsc": "catalog:"
+	}
+}
