@@ -1,6 +1,5 @@
-import { getTestDB } from "./get-test-db";
 import { describe, expect, it } from "vitest";
-import * as schema from "../schema";
+import { getTestDB } from "./get-test-db";
 
 describe("getTestDB", async () => {
 	const { $db } = await getTestDB();

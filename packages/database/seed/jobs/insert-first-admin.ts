@@ -1,7 +1,7 @@
 import { hashPassword } from "@nidoz/utils";
 import { eq } from "drizzle-orm";
 import { defineJob, defineStep } from "../../src/module/seed";
-import * as schema from "../../src/schema";
+import * as $schema from "../../src/schema";
 
 function randomPassword(length = 12) {
 	const chars =
@@ -18,8 +18,8 @@ export default defineJob([
 	defineStep(async (tx) => {
 		const [existing] = await tx
 			.select()
-			.from(schema.admin)
-			.where(eq(schema.admin.email, "chew1992@gmail.com"))
+			.from($schema.admin)
+			.where(eq($schema.admin.email, "chew1992@gmail.com"))
 			.limit(1);
 
 		if (existing) {
@@ -32,7 +32,7 @@ export default defineJob([
 		const hashedPassword = await hashPassword(password);
 
 		const [admin] = await tx
-			.insert(schema.admin)
+			.insert($schema.admin)
 			.values({
 				name: "Clayton Chew",
 				email: "chew1992@gmail.com",
