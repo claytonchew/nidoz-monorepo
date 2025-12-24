@@ -140,16 +140,12 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	let floor = rest.slice(0, midpoint);
 	let unit = rest.slice(midpoint);
 
-	// Additional ambiguity check: if either part is "0", it's ambiguous
-	// because "A010" could be "A-01-0" or "A-0-10"
-	if (floor === "0" || unit === "0" || floor.startsWith("0") === false) {
-		// Actually, let's be more lenient - just check for reasonable floor numbers
-		// Floors typically start with 0 (like 01, 02) in this format
-		if (!floor.startsWith("0") || !unit.startsWith("0")) {
-			throw new Error(
-				`Ambiguous format "${input}". Cannot determine floor and unit boundaries. Use hyphens for clarity (e.g., ${block}-XX-XX)`,
-			);
-		}
+	// Additional ambiguity check: both floor and unit should start with "0" in the standard format
+	// (e.g., A0101 is valid, but A1001 or A0110 could be ambiguous)
+	if (!floor.startsWith("0") || !unit.startsWith("0")) {
+		throw new Error(
+			`Ambiguous format "${input}". Cannot determine floor and unit boundaries. Use hyphens for clarity (e.g., ${block}-XX-XX)`,
+		);
 	}
 
 	// Normalize if they contain "4"
