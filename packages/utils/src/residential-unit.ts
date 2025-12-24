@@ -10,11 +10,14 @@ export interface ResidentialUnit {
 const VALID_BLOCKS = ["A", "B", "C", "D"] as const;
 const SPECIAL_FLOORS = ["G", "LG", "SB", "B"] as const;
 
+type ValidBlock = (typeof VALID_BLOCKS)[number];
+type SpecialFloor = (typeof SPECIAL_FLOORS)[number];
+
 /**
  * Checks if a value is a special floor (G, LG, SB, B)
  */
-function isSpecialFloor(value: string): boolean {
-	return SPECIAL_FLOORS.includes(value as any);
+function isSpecialFloor(value: string): value is SpecialFloor {
+	return SPECIAL_FLOORS.includes(value as SpecialFloor);
 }
 
 /**
@@ -68,7 +71,7 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	// Extract block (first character)
 	const block = trimmedInput[0];
 
-	if (!VALID_BLOCKS.includes(block as any)) {
+	if (!VALID_BLOCKS.includes(block as ValidBlock)) {
 		throw new Error(
 			`Invalid block "${block}". Must be one of: ${VALID_BLOCKS.join(", ")}`,
 		);
