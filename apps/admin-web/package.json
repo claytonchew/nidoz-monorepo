@@ -1,0 +1,24 @@
+{
+	"name": "@nidoz/admin-web",
+	"private": true,
+	"type": "module",
+	"main": "./nuxt.config.ts",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare"
+	},
+	"dependencies": {
+		"@iconify-json/lucide": "^1.2.60",
+		"@iconify-json/simple-icons": "^1.2.46",
+		"@nidoz/base": "workspace:*",
+		"@nidoz/i18n": "workspace:*",
+		"@nidoz/ui": "workspace:*",
+		"nuxt": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"vue-tsc": "catalog:"
+	}
+}

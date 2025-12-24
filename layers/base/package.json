@@ -1,5 +1,5 @@
 {
-	"name": "@nidoz/ui",
+	"name": "@nidoz/base",
 	"private": true,
 	"type": "module",
 	"main": "./nuxt.config.ts",
@@ -12,11 +12,7 @@
 		"postinstall": "nuxt prepare .playground"
 	},
 	"dependencies": {
-		"@iconify-json/lucide": "^1.2.82",
-		"@iconify-json/simple-icons": "^1.2.63",
-		"@nuxt/ui": "^4.3.0",
-		"nuxt": "catalog:",
-		"tailwindcss": "^4.1.18"
+		"nuxt": "catalog:"
 	},
 	"devDependencies": {
 		"typescript": "catalog:",
