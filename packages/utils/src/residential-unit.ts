@@ -117,13 +117,45 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 		);
 	}
 
-	// Check if contains 'A' - this makes it more complex
+	// Check if contains 'A' - this requires special parsing
 	if (rest.includes("A")) {
-		// We need to figure out where floor ends and unit begins
-		// This is complex because "A3A01" could be parsed multiple ways
-		throw new Error(
-			`Ambiguous format "${input}". When using 'A' notation, please use hyphens (e.g., ${block}-XX-XX)`,
-		);
+		// Try to parse format like "3A13A" or "3A01" or "01-3A" (without the hyphen seen by this point)
+		// Pattern: Look for two groups of (digits followed by optional 'A')
+		// We need to find where the floor ends and unit begins
+
+		// Try to match pattern: (digits + optional A) + (digits + optional A)
+		// The challenge is finding the split point
+		// Strategy: Look for the second-to-last 'A' or split in the middle if only one 'A'
+
+		const aCount = (rest.match(/A/g) || []).length;
+
+		if (aCount === 2) {
+			// Pattern like "3A13A" - find the first 'A', that's the end of floor
+			const firstAIndex = rest.indexOf("A");
+			const floor = rest.slice(0, firstAIndex + 1); // Include the 'A'
+			const unit = rest.slice(firstAIndex + 1);
+
+			// Validate both parts
+			const isValidPart = (part: string) => /^\d+A?$/.test(part);
+			if (!isValidPart(floor) || !isValidPart(unit)) {
+				throw new Error(
+					`Ambiguous format "${input}". When using 'A' notation, please use hyphens (e.g., ${block}-XX-XX)`,
+				);
+			}
+
+			return { block, floor, unit };
+		} else if (aCount === 1) {
+			// One 'A' - could be in floor or unit, need to figure out the split
+			// This is ambiguous - we can't tell if "A3A01" is "3A-01" or something else
+			throw new Error(
+				`Ambiguous format "${input}". When using 'A' notation with only one 'A', please use hyphens (e.g., ${block}-XX-XX)`,
+			);
+		} else {
+			// More than 2 'A's or 0 'A's shouldn't reach here
+			throw new Error(
+				`Ambiguous format "${input}". When using 'A' notation, please use hyphens (e.g., ${block}-XX-XX)`,
+			);
+		}
 	}
 
 	// For pure numeric input like "A0101", we need to determine if it's ambiguous

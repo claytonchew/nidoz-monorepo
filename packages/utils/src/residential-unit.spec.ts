@@ -99,6 +99,21 @@ describe("parseResidentialUnit", () => {
 			const result = parseResidentialUnit("A0404");
 			expect(result).toEqual({ block: "A", floor: "3A", unit: "3A" });
 		});
+
+		it("should parse A3A13A format (3A floor and 13A unit)", () => {
+			const result = parseResidentialUnit("A3A13A");
+			expect(result).toEqual({ block: "A", floor: "3A", unit: "13A" });
+		});
+
+		it("should parse A13A23A format", () => {
+			const result = parseResidentialUnit("A13A23A");
+			expect(result).toEqual({ block: "A", floor: "13A", unit: "23A" });
+		});
+
+		it("should parse A3A3A format (both 3A)", () => {
+			const result = parseResidentialUnit("A3A3A");
+			expect(result).toEqual({ block: "A", floor: "3A", unit: "3A" });
+		});
 	});
 
 	describe("invalid block validation", () => {
@@ -142,7 +157,7 @@ describe("parseResidentialUnit", () => {
 			);
 		});
 
-		it("should throw error for non-hyphenated format with A notation", () => {
+		it("should throw error for non-hyphenated format with single A notation (A3A01)", () => {
 			expect(() => parseResidentialUnit("A3A01")).toThrow(/[Aa]mbiguous/);
 		});
 
