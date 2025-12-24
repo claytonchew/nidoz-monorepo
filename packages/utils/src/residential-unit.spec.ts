@@ -114,6 +114,26 @@ describe("parseResidentialUnit", () => {
 			const result = parseResidentialUnit("A3A3A");
 			expect(result).toEqual({ block: "A", floor: "3A", unit: "3A" });
 		});
+
+		it("should parse AG01 format (Ground floor)", () => {
+			const result = parseResidentialUnit("AG01");
+			expect(result).toEqual({ block: "A", floor: "G", unit: "01" });
+		});
+
+		it("should parse ALG02 format (Lower Ground floor)", () => {
+			const result = parseResidentialUnit("ALG02");
+			expect(result).toEqual({ block: "A", floor: "LG", unit: "02" });
+		});
+
+		it("should parse ASB03 format (Sub-basement floor)", () => {
+			const result = parseResidentialUnit("ASB03");
+			expect(result).toEqual({ block: "A", floor: "SB", unit: "03" });
+		});
+
+		it("should parse AB04 format (Basement floor with unit 04->3A)", () => {
+			const result = parseResidentialUnit("AB04");
+			expect(result).toEqual({ block: "A", floor: "B", unit: "3A" });
+		});
 	});
 
 	describe("invalid block validation", () => {
@@ -223,6 +243,38 @@ describe("parseResidentialUnit", () => {
 		it("should handle floor/unit 4 (converts to 3A)", () => {
 			const result = parseResidentialUnit("A-4-4");
 			expect(result).toEqual({ block: "A", floor: "3A", unit: "3A" });
+		});
+	});
+
+	describe("special floors with hyphens", () => {
+		it("should parse A-G-01 format (Ground floor)", () => {
+			const result = parseResidentialUnit("A-G-01");
+			expect(result).toEqual({ block: "A", floor: "G", unit: "01" });
+		});
+
+		it("should parse B-LG-02 format (Lower Ground floor)", () => {
+			const result = parseResidentialUnit("B-LG-02");
+			expect(result).toEqual({ block: "B", floor: "LG", unit: "02" });
+		});
+
+		it("should parse C-SB-03 format (Sub-basement floor)", () => {
+			const result = parseResidentialUnit("C-SB-03");
+			expect(result).toEqual({ block: "C", floor: "SB", unit: "03" });
+		});
+
+		it("should parse D-B-04 format (Basement floor with unit 04->3A)", () => {
+			const result = parseResidentialUnit("D-B-04");
+			expect(result).toEqual({ block: "D", floor: "B", unit: "3A" });
+		});
+
+		it("should parse A-G-3A format (Ground floor with 3A unit)", () => {
+			const result = parseResidentialUnit("A-G-3A");
+			expect(result).toEqual({ block: "A", floor: "G", unit: "3A" });
+		});
+
+		it("should handle lowercase special floor (a-g-01)", () => {
+			const result = parseResidentialUnit("a-g-01");
+			expect(result).toEqual({ block: "A", floor: "G", unit: "01" });
 		});
 	});
 });

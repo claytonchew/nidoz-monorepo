@@ -8,6 +8,14 @@ export interface ResidentialUnit {
 }
 
 const VALID_BLOCKS = ["A", "B", "C", "D"] as const;
+const SPECIAL_FLOORS = ["G", "LG", "SB", "B"] as const;
+
+/**
+ * Checks if a value is a special floor (G, LG, SB, B)
+ */
+function isSpecialFloor(value: string): boolean {
+	return SPECIAL_FLOORS.includes(value as any);
+}
 
 /**
  * Converts floor/unit numbers where "4" becomes "3A" based on Asian residential convention
@@ -16,7 +24,6 @@ const VALID_BLOCKS = ["A", "B", "C", "D"] as const;
 function normalizeNumber(num: string): string {
 	// If the number ends with 4, replace it with (n-1)A
 	if (num.endsWith("4")) {
-		const withoutFour = num.slice(0, -1);
 		const numValue = parseInt(num, 10);
 		const newValue = numValue - 1;
 		// Pad to match original length
@@ -27,30 +34,16 @@ function normalizeNumber(num: string): string {
 }
 
 /**
- * Denormalizes a number with "A" suffix back to "4"
- * Examples: "3A" -> "04", "13A" -> "14"
- */
-function denormalizeNumber(num: string): string {
-	if (num.endsWith("A")) {
-		const withoutA = num.slice(0, -1);
-		const numValue = parseInt(withoutA, 10);
-		const newValue = numValue + 1;
-		// Pad to match original length
-		const padLength = withoutA.length;
-		return newValue.toString().padStart(padLength, "0");
-	}
-	return num;
-}
-
-/**
  * Parse a residential unit number from user input
  *
  * Supports formats:
- * - With hyphens: A-01-01, A-04-04 (A-3A-3A)
- * - Without hyphens: A0101
+ * - With hyphens: A-01-01, A-04-04 (A-3A-3A), A-G-01
+ * - Without hyphens: A0101, A3A13A
  *
  * In Asian residential buildings, the number "4" is replaced with "3A"
  * (e.g., 04 becomes 3A, 14 becomes 13A)
+ *
+ * Special floor types are supported: G (Ground), LG (Lower Ground), SB (Sub-basement), B (Basement)
  *
  * @category String
  * @throws {Error} If the format is invalid or ambiguous
@@ -60,6 +53,9 @@ function denormalizeNumber(num: string): string {
  * parseResidentialUnit("A0101")   // { block: "A", floor: "01", unit: "01" }
  * parseResidentialUnit("A-04-04") // { block: "A", floor: "3A", unit: "3A" }
  * parseResidentialUnit("A-3A-3A") // { block: "A", floor: "3A", unit: "3A" }
+ * parseResidentialUnit("A3A13A")  // { block: "A", floor: "3A", unit: "13A" }
+ * parseResidentialUnit("A-G-01")  // { block: "A", floor: "G", unit: "01" }
+ * parseResidentialUnit("A-LG-02") // { block: "A", floor: "LG", unit: "02" }
  * ```
  */
 export function parseResidentialUnit(input: string): ResidentialUnit {
@@ -94,27 +90,53 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 
 		let [floor, unit] = parts;
 
-		// Validate that floor and unit are valid (digits or ending with A)
-		const isValidPart = (part: string) => /^\d+A?$/.test(part);
-		if (!isValidPart(floor) || !isValidPart(unit)) {
+		// Validate floor: can be digits with optional 'A', or a special floor (G, LG, SB, B)
+		const isValidFloor = (f: string) => /^\d+A?$/.test(f) || isSpecialFloor(f);
+		// Validate unit: digits with optional 'A'
+		const isValidUnit = (u: string) => /^\d+A?$/.test(u);
+
+		if (!isValidFloor(floor) || !isValidUnit(unit)) {
 			throw new Error(
-				`Invalid floor or unit in "${input}". Must contain only digits or digits followed by 'A'`,
+				`Invalid floor or unit in "${input}". Floor must be digits, digits+'A', or special floor (G, LG, SB, B). Unit must be digits or digits+'A'`,
 			);
 		}
 
-		// Normalize if they contain "4"
-		floor = normalizeNumber(floor);
+		// Normalize floor/unit if they contain "4" (but not for special floors)
+		if (!isSpecialFloor(floor)) {
+			floor = normalizeNumber(floor);
+		}
 		unit = normalizeNumber(unit);
 
 		return { block, floor, unit };
 	}
 
-	// Try to parse format without hyphens: A0101
+	// Try to parse format without hyphens: A0101, AG01, ALG01, etc.
 	// This is ambiguous if the length is odd or doesn't allow clean split
 	if (rest.length < 2) {
 		throw new Error(
 			`Ambiguous or invalid format "${input}". Too short to determine floor and unit`,
 		);
+	}
+
+	// Check if starts with special floor (G, LG, SB, B)
+	for (const specialFloor of SPECIAL_FLOORS) {
+		if (rest.startsWith(specialFloor)) {
+			const floor = specialFloor;
+			const unit = rest.slice(specialFloor.length);
+
+			// Validate unit is valid (digits or digits with A)
+			const isValidUnit = (u: string) => /^\d+A?$/.test(u);
+			if (!unit || !isValidUnit(unit)) {
+				throw new Error(
+					`Invalid unit in "${input}". Unit must be digits or digits+'A'`,
+				);
+			}
+
+			// Normalize unit if it contains "4"
+			const normalizedUnit = normalizeNumber(unit);
+
+			return { block, floor, unit: normalizedUnit };
+		}
 	}
 
 	// Check if contains 'A' - this requires special parsing
