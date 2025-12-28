@@ -1,8 +1,8 @@
-import { eq, ne, and, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import * as $schema from "../schema";
 import { getTestDB } from "../test-utils/get-test-db";
-import { AdminQueries, AdminOTPQueries } from "./admin";
+import { AdminOTPQueries, AdminQueries } from "./admin";
 
 describe("AdminQueries", async () => {
 	const { $db } = await getTestDB();
@@ -187,7 +187,6 @@ describe("AdminOTPQueries", async () => {
 	});
 
 	it("should verify OTP without revoking if such opt is passed in", async () => {
-		console.log(temp.otpToVerify);
 		const { adminId, token } = temp.otpToVerify;
 		const verify = await adminOTPQueries.verifyAdminLogin(
 			{ adminId, token },
