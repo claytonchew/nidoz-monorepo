@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "cd2471ab-59d4-44ec-b31a-b8e90f9d1ba3",
+	"id": "997e5545-2563-4df4-aa4c-baeaa758a49e",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"admin": {
@@ -194,14 +194,14 @@
 				},
 				"floor": {
 					"name": "floor",
-					"type": "integer",
+					"type": "text",
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
 				},
 				"number": {
 					"name": "number",
-					"type": "integer",
+					"type": "text",
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false

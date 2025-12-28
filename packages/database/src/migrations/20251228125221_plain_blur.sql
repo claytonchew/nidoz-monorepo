@@ -28,8 +28,8 @@ CREATE TABLE `admin_otp` (
 CREATE TABLE `unit` (
 	`id` text PRIMARY KEY NOT NULL,
 	`block` text NOT NULL,
-	`floor` integer NOT NULL,
-	`number` integer NOT NULL
+	`floor` text NOT NULL,
+	`number` text NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `unit_block_floor_number_unique` ON `unit` (`block`,`floor`,`number`);

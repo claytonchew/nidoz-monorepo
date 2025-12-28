@@ -7,15 +7,14 @@ import { generateRandomTag } from "./get-random-tag";
 import { afterAll } from "vitest";
 import { rm, mkdir } from "node:fs/promises";
 import { createTursoMigrator } from "../module/migrator";
-import { createTursoSeeder } from "../module/seed";
-import seedConfig from "../../seed.config";
+import { createTursoSeeder, type SeedConfig } from "../module/seed";
 
 config({ path: ".env", quiet: true });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 type TestDBConfig = {
-	seed?: boolean;
+	seedConfig?: SeedConfig;
 	name?: string;
 };
 
@@ -41,8 +40,8 @@ export async function getTestDB(config: TestDBConfig = {}) {
 	});
 	await migrator.migrate();
 
-	if (config.seed) {
-		const seeder = createTursoSeeder(seedConfig);
+	if (config.seedConfig) {
+		const seeder = createTursoSeeder(config.seedConfig);
 		await seeder.run(db, {
 			seedTests: process.env.DATABASE_ENABLE_SEED_TEST_DATA === "true",
 		});

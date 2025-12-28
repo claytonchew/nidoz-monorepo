@@ -1,10 +1,10 @@
 /**
- * Result of parsing a residential unit number
+ * Result of parsing a residential number number
  */
 export interface ResidentialUnit {
 	block: string;
 	floor: string;
-	unit: string;
+	number: string;
 }
 
 const VALID_BLOCKS = ["A", "B", "C", "D"] as const;
@@ -21,7 +21,7 @@ function isSpecialFloor(value: string): value is SpecialFloor {
 }
 
 /**
- * Converts floor/unit numbers where "4" becomes "3A" based on Asian residential convention
+ * Converts floor/number numbers where "4" becomes "3A" based on Asian residential convention
  * Examples: "04" -> "3A", "14" -> "13A", "24" -> "23A"
  */
 function normalizeNumber(num: string): string {
@@ -37,7 +37,7 @@ function normalizeNumber(num: string): string {
 }
 
 /**
- * Parse a residential unit number from user input
+ * Parse a residential number number from user input
  *
  * Supports formats:
  * - With hyphens: A-01-01, A-04-04 (A-3A-3A), A-G-01
@@ -52,13 +52,13 @@ function normalizeNumber(num: string): string {
  * @throws {Error} If the format is invalid or ambiguous
  * @example
  * ```
- * parseResidentialUnit("A-01-01") // { block: "A", floor: "01", unit: "01" }
- * parseResidentialUnit("A0101")   // { block: "A", floor: "01", unit: "01" }
- * parseResidentialUnit("A-04-04") // { block: "A", floor: "3A", unit: "3A" }
- * parseResidentialUnit("A-3A-3A") // { block: "A", floor: "3A", unit: "3A" }
- * parseResidentialUnit("A3A13A")  // { block: "A", floor: "3A", unit: "13A" }
- * parseResidentialUnit("A-G-01")  // { block: "A", floor: "G", unit: "01" }
- * parseResidentialUnit("A-LG-02") // { block: "A", floor: "LG", unit: "02" }
+ * parseResidentialUnit("A-01-01") // { block: "A", floor: "01", number: "01" }
+ * parseResidentialUnit("A0101")   // { block: "A", floor: "01", number: "01" }
+ * parseResidentialUnit("A-04-04") // { block: "A", floor: "3A", number: "3A" }
+ * parseResidentialUnit("A-3A-3A") // { block: "A", floor: "3A", number: "3A" }
+ * parseResidentialUnit("A3A13A")  // { block: "A", floor: "3A", number: "13A" }
+ * parseResidentialUnit("A-G-01")  // { block: "A", floor: "G", number: "01" }
+ * parseResidentialUnit("A-LG-02") // { block: "A", floor: "LG", number: "02" }
  * ```
  */
 export function parseResidentialUnit(input: string): ResidentialUnit {
@@ -87,37 +87,37 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 
 		if (parts.length !== 2 || parts[0] === "" || parts[1] === "") {
 			throw new Error(
-				`Invalid format "${input}". Expected format: {block}-{floor}-{unit}`,
+				`Invalid format "${input}". Expected format: {block}-{floor}-{number}`,
 			);
 		}
 
-		let [floor, unit] = parts;
+		let [floor, number] = parts;
 
 		// Validate floor: can be digits with optional 'A', or a special floor (G, LG, SB, B)
 		const isValidFloor = (f: string) => /^\d+A?$/.test(f) || isSpecialFloor(f);
-		// Validate unit: digits with optional 'A'
+		// Validate number: digits with optional 'A'
 		const isValidUnit = (u: string) => /^\d+A?$/.test(u);
 
-		if (!isValidFloor(floor) || !isValidUnit(unit)) {
+		if (!isValidFloor(floor) || !isValidUnit(number)) {
 			throw new Error(
-				`Invalid floor or unit in "${input}". Floor must be digits, digits+'A', or special floor (G, LG, SB, B). Unit must be digits or digits+'A'`,
+				`Invalid floor or number in "${input}". Floor must be digits, digits+'A', or special floor (G, LG, SB, B). Unit must be digits or digits+'A'`,
 			);
 		}
 
-		// Normalize floor/unit if they contain "4" (but not for special floors)
+		// Normalize floor/number if they contain "4" (but not for special floors)
 		if (!isSpecialFloor(floor)) {
 			floor = normalizeNumber(floor);
 		}
-		unit = normalizeNumber(unit);
+		number = normalizeNumber(number);
 
-		return { block, floor, unit };
+		return { block, floor, number };
 	}
 
 	// Try to parse format without hyphens: A0101, AG01, ALG01, etc.
 	// This is ambiguous if the length is odd or doesn't allow clean split
 	if (rest.length < 2) {
 		throw new Error(
-			`Ambiguous or invalid format "${input}". Too short to determine floor and unit`,
+			`Ambiguous or invalid format "${input}". Too short to determine floor and number`,
 		);
 	}
 
@@ -125,20 +125,20 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	for (const specialFloor of SPECIAL_FLOORS) {
 		if (rest.startsWith(specialFloor)) {
 			const floor = specialFloor;
-			const unit = rest.slice(specialFloor.length);
+			const number = rest.slice(specialFloor.length);
 
-			// Validate unit is valid (digits or digits with A)
+			// Validate number is valid (digits or digits with A)
 			const isValidUnit = (u: string) => /^\d+A?$/.test(u);
-			if (!unit || !isValidUnit(unit)) {
+			if (!number || !isValidUnit(number)) {
 				throw new Error(
-					`Invalid unit in "${input}". Unit must be digits or digits+'A'`,
+					`Invalid number in "${input}". Unit must be digits or digits+'A'`,
 				);
 			}
 
-			// Normalize unit if it contains "4"
-			const normalizedUnit = normalizeNumber(unit);
+			// Normalize number if it contains "4"
+			const normalizedUnit = normalizeNumber(number);
 
-			return { block, floor, unit: normalizedUnit };
+			return { block, floor, number: normalizedUnit };
 		}
 	}
 
@@ -146,7 +146,7 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	if (rest.includes("A")) {
 		// Try to parse format like "3A13A" or "3A01" or "01-3A" (without the hyphen seen by this point)
 		// Pattern: Look for two groups of (digits followed by optional 'A')
-		// We need to find where the floor ends and unit begins
+		// We need to find where the floor ends and number begins
 
 		// Try to match pattern: (digits + optional A) + (digits + optional A)
 		// The challenge is finding the split point
@@ -158,19 +158,19 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 			// Pattern like "3A13A" - find the first 'A', that's the end of floor
 			const firstAIndex = rest.indexOf("A");
 			const floor = rest.slice(0, firstAIndex + 1); // Include the 'A'
-			const unit = rest.slice(firstAIndex + 1);
+			const number = rest.slice(firstAIndex + 1);
 
 			// Validate both parts
 			const isValidPart = (part: string) => /^\d+A?$/.test(part);
-			if (!isValidPart(floor) || !isValidPart(unit)) {
+			if (!isValidPart(floor) || !isValidPart(number)) {
 				throw new Error(
 					`Ambiguous format "${input}". When using 'A' notation, please use hyphens (e.g., ${block}-XX-XX)`,
 				);
 			}
 
-			return { block, floor, unit };
+			return { block, floor, number };
 		} else if (aCount === 1) {
-			// One 'A' - could be in floor or unit, need to figure out the split
+			// One 'A' - could be in floor or number, need to figure out the split
 			// This is ambiguous - we can't tell if "A3A01" is "3A-01" or something else
 			throw new Error(
 				`Ambiguous format "${input}". When using 'A' notation with only one 'A', please use hyphens (e.g., ${block}-XX-XX)`,
@@ -187,7 +187,7 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	// Valid cases: even length that can be split equally
 	if (rest.length % 2 !== 0) {
 		throw new Error(
-			`Ambiguous format "${input}". Cannot determine floor and unit boundaries. Use hyphens for clarity`,
+			`Ambiguous format "${input}". Cannot determine floor and number boundaries. Use hyphens for clarity`,
 		);
 	}
 
@@ -195,19 +195,19 @@ export function parseResidentialUnit(input: string): ResidentialUnit {
 	// We'll require at least 2 digits per part for non-hyphenated format
 	const midpoint = rest.length / 2;
 	let floor = rest.slice(0, midpoint);
-	let unit = rest.slice(midpoint);
+	let number = rest.slice(midpoint);
 
-	// Additional ambiguity check: both floor and unit should start with "0" in the standard format
+	// Additional ambiguity check: both floor and number should start with "0" in the standard format
 	// (e.g., A0101 is valid, but A1001 or A0110 could be ambiguous)
-	if (!floor.startsWith("0") || !unit.startsWith("0")) {
+	if (!floor.startsWith("0") || !number.startsWith("0")) {
 		throw new Error(
-			`Ambiguous format "${input}". Cannot determine floor and unit boundaries. Use hyphens for clarity (e.g., ${block}-XX-XX)`,
+			`Ambiguous format "${input}". Cannot determine floor and number boundaries. Use hyphens for clarity (e.g., ${block}-XX-XX)`,
 		);
 	}
 
 	// Normalize if they contain "4"
 	floor = normalizeNumber(floor);
-	unit = normalizeNumber(unit);
+	number = normalizeNumber(number);
 
-	return { block, floor, unit };
+	return { block, floor, number };
 }

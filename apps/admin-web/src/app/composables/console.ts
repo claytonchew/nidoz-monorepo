@@ -14,14 +14,6 @@ export const useConsole = () => {
 				},
 			},
 			{
-				label: "Units",
-				icon: "lucide:building-2",
-				to: "/units",
-				onSelect: () => {
-					open.value = false;
-				},
-			},
-			{
 				label: "Vehicles",
 				icon: "lucide:car-front",
 				to: "/vehicles",

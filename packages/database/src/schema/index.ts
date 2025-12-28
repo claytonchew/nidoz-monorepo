@@ -68,8 +68,8 @@ export const unit = sqliteTable(
 			.primaryKey()
 			.$default(() => createId()),
 		block: t.text().notNull(),
-		floor: t.integer().notNull(),
-		number: t.integer().notNull(),
+		floor: t.text().notNull(),
+		number: t.text().notNull(),
 	}),
 	(table) => [unique().on(table.block, table.floor, table.number)],
 );
