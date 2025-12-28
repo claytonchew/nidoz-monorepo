@@ -12,18 +12,11 @@
 	</UPageCard>
 </template>
 
-<i18n lang="json">
-	{ "en": { "Login": "Login", "LoginDescription": "Enter your credentials to
-	access your account." }, "ms": { "Login": "Log Masuk", "LoginDescription":
-	"Masukkan kelayakan anda untuk mengakses akaun anda." }, "zh": { "Login":
-	"登录", "LoginDescription": "输入您的凭据以访问您的帐户。" } }
-</i18n>
-
 <script setup lang="ts">
 import type { AuthFormField, FormSubmitEvent } from "@nuxt/ui";
 import * as z from "zod";
 
-const { t } = useI18n({ useScope: "local" });
+const { t } = useI18n();
 
 const fields = computed<AuthFormField[]>(() => [
 	{

@@ -14,4 +14,6 @@ export default {
 	Password: "Kata Laluan",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"Sila semak emel dan kata laluan anda dan cuba lagi.",
+	Login: "Log Masuk",
+	LoginDescription: "Masukkan kelayakan anda untuk mengakses akaun anda.",
 };

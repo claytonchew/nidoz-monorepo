@@ -14,4 +14,6 @@ export default {
 	Password: "Password",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"Please check your email and password and try again.",
+	Login: "Login",
+	LoginDescription: "Enter your credentials to access your account.",
 };

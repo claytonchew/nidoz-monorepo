@@ -14,4 +14,6 @@ export default {
 	Password: "密码",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"请检查您的电子邮件和密码，然后重试。",
+	Login: "登录",
+	LoginDescription: "输入您的凭据以访问您的帐户。",
 };
