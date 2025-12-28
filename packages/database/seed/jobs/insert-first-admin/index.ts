@@ -1,7 +1,7 @@
 import { hashPassword } from "@nidoz/utils";
 import { eq } from "drizzle-orm";
-import { defineJob, defineStep } from "../../src/module/seed";
-import * as $schema from "../../src/schema";
+import { defineJob, defineStep } from "../../../src/module/seed";
+import * as $schema from "../../../src/schema";
 
 function randomPassword(length = 12) {
 	const chars =
