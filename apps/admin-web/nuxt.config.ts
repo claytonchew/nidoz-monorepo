@@ -13,4 +13,15 @@ export default defineNuxtConfig({
 	extends: [["@nidoz/base", { install: true }]],
 
 	modules: ["nuxt-auth-utils"],
+
+	runtimeConfig: {
+		session: {
+			name: "nas",
+			password: "lO1hmvEb7LdPvEXNlXeiR8rIuadUqgdGPANOTH0J5F",
+			cookie: {
+				// this is define here so that dev mode can set ENV NUXT_SESSION_COOKIE_SECURE=false
+				secure: true,
+			},
+		},
+	},
 });
