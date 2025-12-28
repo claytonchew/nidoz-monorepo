@@ -12,7 +12,15 @@
 		"postinstall": "nuxt prepare .playground"
 	},
 	"dependencies": {
-		"nuxt": "catalog:"
+		"@nidoz/database": "workspace:*",
+		"@nidoz/i18n": "workspace:*",
+		"@nidoz/ui": "workspace:*",
+		"@nidoz/utils": "workspace:*",
+		"@nuxt/ui": "^4.3.0",
+		"@nuxtjs/i18n": "^10.2.1",
+		"nuxt": "catalog:",
+		"nuxt-auth-utils": "^0.5.26",
+		"zod-validation-error": "^5.0.0"
 	},
 	"devDependencies": {
 		"typescript": "catalog:",

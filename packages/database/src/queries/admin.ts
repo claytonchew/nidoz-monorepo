@@ -1,3 +1,6 @@
+import { generateRandomCode, generateRandomPassword } from "@nidoz/utils";
+import defu from "defu";
+import type { SQL } from "drizzle-orm";
 import {
 	and,
 	asc,
@@ -16,15 +19,27 @@ import type {
 import * as $schema from "../schema";
 import type { Paginated } from "./types";
 import { constructCommonQueries } from "./utils";
-import { generateRandomCode, generateRandomPassword } from "@nidoz/utils";
-import defu from "defu";
-import type { SQL } from "drizzle-orm";
 
 export interface AdminQueries
 	extends ReturnType<typeof constructCommonQueries<typeof $schema.admin>> {}
 export class AdminQueries {
 	constructor(private readonly $db: DrizzleTursoClient) {
 		Object.assign(this, constructCommonQueries(this.$db, $schema.admin));
+	}
+
+	async getByEmail(email: string, tx?: DrizzleTursoTransaction) {
+		const db = tx ?? this.$db;
+		try {
+			const record = await db
+				.select()
+				.from($schema.admin)
+				.where(eq($schema.admin.email, email))
+				.limit(1);
+			return record[0] || null;
+		} catch (error) {
+			console.warn(error);
+			return null;
+		}
 	}
 
 	async getAll(

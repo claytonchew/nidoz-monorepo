@@ -1,3 +1,17 @@
 export default {
 	Welcome: "欢迎",
+	InternalServerError: "内部服务器错误",
+	ValidationError: "验证错误",
+	InvalidCredentials: "无效的凭据",
+	YouAreLoggedIn: "您已登录",
+	YouHaveBeenLoggedOut: "您已登出",
+	WelcomeBack: "欢迎回来",
+	InvalidX: "无效的{field}",
+	EnterYourX: "输入您的{field}",
+	EnterX: "输入{field}",
+	CannotBeEmpty: "{field}不能为空",
+	Email: "电子邮件",
+	Password: "密码",
+	PleaseCheckYourEmailAndPasswordAndTryAgain:
+		"请检查您的电子邮件和密码，然后重试。",
 };

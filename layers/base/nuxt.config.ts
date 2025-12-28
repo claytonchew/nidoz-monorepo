@@ -1,4 +1,9 @@
+import { fileURLToPath } from "node:url";
+
 export default defineNuxtConfig({
+	alias: {
+		"#workspace": fileURLToPath(new URL("../../", import.meta.url)),
+	},
 	compatibilityDate: "2025-01-15",
 	$meta: { name: "base" },
 	srcDir: "src/app",
@@ -9,5 +14,10 @@ export default defineNuxtConfig({
 		shared: "src/shared",
 	},
 
-	modules: [],
+	extends: [
+		["@nidoz/i18n", { install: true }],
+		["@nidoz/ui", { install: true }],
+	],
+
+	modules: ["nuxt-auth-utils", "@nuxt/ui"],
 });
