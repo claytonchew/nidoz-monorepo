@@ -106,7 +106,7 @@ const getActionItems = computed(
 					type: "separator",
 				},
 				{
-					label: "Send Link",
+					label: "Share Link",
 					icon: "lucide:link-2",
 				},
 			];
