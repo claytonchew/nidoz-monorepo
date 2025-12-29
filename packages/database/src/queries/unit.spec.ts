@@ -5,6 +5,7 @@ import { defineSeedConfig } from "../module/seed";
 import * as $schema from "../schema";
 import { getTestDB } from "../test-utils/get-test-db";
 import { UnitOTPQueries, UnitQueries } from "./unit";
+import { VehicleQueries } from "./vehicle";
 
 describe("UnitQueries", async () => {
 	const { $db } = await getTestDB({
@@ -17,6 +18,7 @@ describe("UnitQueries", async () => {
 		}),
 	});
 	const unitQueries = new UnitQueries($db);
+	const vehicleQueries = new VehicleQueries($db);
 
 	it("should get unit by unit string", async () => {
 		const unit = await unitQueries.getByUnit("A-32-05");
@@ -26,6 +28,39 @@ describe("UnitQueries", async () => {
 	it("should get all units", async () => {
 		const units = await unitQueries.getAll({ page: 1, pageSize: 100 });
 		expect(units.records.length).toBe(100);
+	});
+
+	it("should get units (each with vehicles information)", async () => {
+		const unitRecord = await unitQueries.getByUnit("A-17-3A");
+		const vehiclesData = await vehicleQueries.upsertMultiple([
+			{
+				unitId: unitRecord!.id,
+				numberPlate: "A1",
+				model: "Toyota Vios",
+				color: "White",
+			},
+			{
+				unitId: unitRecord!.id,
+				numberPlate: "A2",
+				model: "Toyota City",
+				color: "Black",
+			},
+		]);
+
+		const units = await unitQueries.getAll({
+			filters: { block: "A", floor: "17", number: "3A" },
+		});
+		const vehiclesRecord = units.records[0].vehicles;
+
+		for (let i = 0; i < vehiclesData.length; i++) {
+			expect(vehiclesRecord[i]).toHaveProperty("id", vehiclesData[i].id);
+			expect(vehiclesRecord[i]).toHaveProperty(
+				"numberPlate",
+				vehiclesData[i].numberPlate,
+			);
+			expect(vehiclesRecord[i]).toHaveProperty("model", vehiclesData[i].model);
+			expect(vehiclesRecord[i]).toHaveProperty("color", vehiclesData[i].color);
+		}
 	});
 });
 

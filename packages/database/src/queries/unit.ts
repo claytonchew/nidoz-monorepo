@@ -5,7 +5,16 @@ import {
 } from "@nidoz/utils";
 import defu from "defu";
 import type { SQL } from "drizzle-orm";
-import { and, asc, count, desc, eq, isNull } from "drizzle-orm";
+import {
+	and,
+	asc,
+	count,
+	desc,
+	eq,
+	getTableColumns,
+	isNull,
+	sql,
+} from "drizzle-orm";
 import type {
 	DrizzleTursoClient,
 	DrizzleTursoTransaction,
@@ -62,15 +71,55 @@ export class UnitQueries {
 			sort?: "asc" | "desc";
 		},
 		tx?: DrizzleTursoTransaction,
-	): Promise<
-		Paginated<Omit<typeof $schema.unit.$inferSelect, "hashedPassword">>
-	> {
+	) {
 		const db = tx ?? this.$db;
 		try {
 			const offset = (page - 1) * pageSize;
 
+			const vehiclesQuery = db.$with("vehicles_query").as(
+				db
+					.select({
+						unitId: $schema.vehicle.unitId,
+						/**
+						 * Drizzle driver does not support JSON array parsing for sqlite,
+						 * so we have to do it manually and classify it as string
+						 */
+						vehicles: sql<string>`
+							COALESCE(
+								json_group_array(
+									json_object(
+										'id', ${$schema.vehicle.id},
+										'numberPlate', ${$schema.vehicle.numberPlate},
+										'model', ${$schema.vehicle.model},
+										'color', ${$schema.vehicle.color},
+										'createdAt', ${$schema.vehicle.createdAt},
+										'updatedAt', ${$schema.vehicle.updatedAt}
+									)
+								),
+								'[]'
+							)
+						`.as("vehicles"),
+					})
+					.from($schema.vehicle)
+					.groupBy($schema.vehicle.unitId),
+			);
+
 			let query = db
-				.select()
+				.with(vehiclesQuery)
+				.select({
+					...getTableColumns($schema.unit),
+					vehicles:
+						sql<string>`COALESCE(${vehiclesQuery.vehicles}, '[]')`.mapWith<
+							(val: string) => (typeof $schema.vehicle.$inferSelect)[]
+						>((val: string) => {
+							const parsed = JSON.parse(val);
+							parsed.forEach((vehicle: any) => {
+								vehicle.createdAt = new Date(vehicle.createdAt);
+								vehicle.updatedAt = new Date(vehicle.updatedAt);
+							});
+							return parsed;
+						}),
+				})
 				.from($schema.unit)
 				.orderBy(
 					...(sort === "asc"
@@ -85,6 +134,7 @@ export class UnitQueries {
 								desc($schema.unit.number),
 							]),
 				)
+				.leftJoin(vehiclesQuery, eq($schema.unit.id, vehiclesQuery.unitId))
 				.limit(pageSize)
 				.offset(offset)
 				.$dynamic();
