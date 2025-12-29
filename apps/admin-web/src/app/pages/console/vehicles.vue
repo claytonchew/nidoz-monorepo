@@ -27,6 +27,7 @@
 				:get-action-items="getActionItems"
 				:loading="status === 'pending'"
 				@update:sort="onSort"
+				@refresh="refresh"
 			/>
 
 			<div
