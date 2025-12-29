@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { sqliteTable, unique } from "drizzle-orm/sqlite-core";
+import { index, sqliteTable, unique } from "drizzle-orm/sqlite-core";
 
 export const AdminStatus = {
 	Active: "ACTIVE",
@@ -72,4 +72,68 @@ export const unit = sqliteTable(
 		number: t.text().notNull(),
 	}),
 	(table) => [unique().on(table.block, table.floor, table.number)],
+);
+
+export const UnitOTPType = {
+	VehicleManagement: "VEHICLE_MANAGEMENT",
+} as const;
+export type UnitOTPType = (typeof UnitOTPType)[keyof typeof UnitOTPType];
+
+export const unitOTP = sqliteTable("unit_otp", (t) => ({
+	id: t
+		.text()
+		.primaryKey()
+		.$default(() => createId()),
+	createdAt: t
+		.integer({ mode: "timestamp" })
+		.notNull()
+		.$default(() => new Date()),
+	updatedAt: t
+		.integer({ mode: "timestamp" })
+		.notNull()
+		.$default(() => new Date())
+		.$onUpdate(() => new Date()),
+	type: t
+		.text()
+		.$type<UnitOTPType>()
+		.notNull()
+		.default(UnitOTPType.VehicleManagement),
+	unitId: t
+		.text()
+		.references(() => unit.id, { onUpdate: "cascade", onDelete: "cascade" }),
+	code: t.text().notNull(),
+	token: t.text().notNull(),
+	expiresAt: t.integer({ mode: "timestamp" }).notNull(),
+	revokedAt: t.integer({ mode: "timestamp" }),
+	revokedReason: t.text(),
+}));
+
+export const vehicle = sqliteTable(
+	"vehicle",
+	(t) => ({
+		id: t
+			.text()
+			.primaryKey()
+			.$default(() => createId()),
+		createdAt: t
+			.integer({ mode: "timestamp" })
+			.notNull()
+			.$default(() => new Date()),
+		updatedAt: t
+			.integer({ mode: "timestamp" })
+			.notNull()
+			.$default(() => new Date())
+			.$onUpdate(() => new Date()),
+		unitId: t
+			.text()
+			.references(() => unit.id, { onUpdate: "cascade", onDelete: "cascade" })
+			.notNull(),
+		numberPlate: t.text().notNull(),
+		model: t.text(),
+		color: t.text(),
+	}),
+	(table) => [
+		index("idx_vehicle_created_at").on(table.unitId),
+		index("idx_vehicle_unit_id").on(table.unitId),
+	],
 );

@@ -1,13 +1,11 @@
 import {
-	and,
-	asc,
-	count,
-	desc,
-	eq,
-	getTableColumns,
-	ilike,
-	or,
-} from "drizzle-orm";
+	generateRandomCode,
+	generateRandomPassword,
+	parseResidentialUnit,
+} from "@nidoz/utils";
+import defu from "defu";
+import type { SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull } from "drizzle-orm";
 import type {
 	DrizzleTursoClient,
 	DrizzleTursoTransaction,
@@ -15,7 +13,6 @@ import type {
 import * as $schema from "../schema";
 import type { Paginated } from "./types";
 import { constructCommonQueries } from "./utils";
-import { parseResidentialUnit } from "@nidoz/utils";
 
 export interface UnitQueries
 	extends ReturnType<typeof constructCommonQueries<typeof $schema.unit>> {}
@@ -141,6 +138,362 @@ export class UnitQueries {
 				page,
 				pageSize,
 			};
+		}
+	}
+}
+
+export class UnitOTPQueries {
+	private readonly config = {
+		vehicleManagement: {
+			expiresIn: 30 * 24 * 60 * 60, // 30 days
+		},
+	} as const;
+
+	constructor(private readonly $db: DrizzleTursoClient) {}
+
+	async generate(
+		{
+			type,
+			data,
+		}: {
+			type: $schema.UnitOTPType;
+			data: { unitId?: string; expiresAt?: Date };
+		},
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		const { unitId } = data;
+
+		let expiresAt = data.expiresAt;
+		switch (type) {
+			case $schema.UnitOTPType.VehicleManagement:
+				expiresAt =
+					expiresAt ??
+					new Date(Date.now() + this.config.vehicleManagement.expiresIn * 1000);
+				break;
+			default:
+				throw new Error("Invalid OTP type");
+		}
+
+		try {
+			if (!unitId) {
+				throw new Error("unitId is required");
+			}
+
+			const code = generateRandomCode(8);
+			const token = generateRandomPassword(16);
+
+			return await db.transaction(async (tx) => {
+				await this.revoke(
+					{
+						type,
+						data: { unitId },
+						opts: { revokedReason: "replaced" },
+					},
+					tx,
+				);
+
+				const [record] = await tx
+					.insert($schema.unitOTP)
+					.values({
+						type,
+						unitId,
+						code,
+						token,
+						expiresAt,
+					})
+					.returning();
+
+				if (!record) throw new Error("Fail to create unit OTP");
+				return record;
+			});
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	private async revoke(
+		{
+			type,
+			data,
+			opts,
+		}: {
+			type: $schema.UnitOTPType;
+			data: {
+				id?: string;
+				unitId?: string;
+				code?: string;
+				token?: string;
+			};
+			opts?: {
+				revokedReason?: string;
+			};
+		},
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		const { id, unitId, code, token } = data;
+
+		if (!id && !unitId && !token) {
+			throw new Error("unitId, or token is required");
+		}
+
+		const conditions = [
+			eq($schema.unitOTP.type, type),
+			isNull($schema.unitOTP.revokedAt),
+		];
+		if (id) {
+			conditions.push(eq($schema.unitOTP.id, id));
+		}
+		if (unitId) {
+			conditions.push(eq($schema.unitOTP.unitId, unitId));
+		}
+		if (code) {
+			conditions.push(eq($schema.unitOTP.code, code));
+		}
+		if (token) {
+			conditions.push(eq($schema.unitOTP.token, token));
+		}
+
+		try {
+			return await db
+				.update($schema.unitOTP)
+				.set({ revokedAt: new Date(), revokedReason: opts?.revokedReason })
+				.where(and(...conditions))
+				.returning();
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	private async verify(
+		{
+			type,
+			verifier,
+			opts,
+		}: {
+			type: $schema.UnitOTPType;
+			verifier: {
+				id?: string;
+				unitId?: string;
+				code?: string;
+				token?: string;
+			};
+			opts?: { revokeOnVerify?: boolean };
+		},
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		const { id, code, token, unitId } = verifier;
+
+		if (!id && !code && !token && !unitId) {
+			throw new Error("id, code, token, or unitId is required");
+		}
+		if (!code && !token) {
+			throw new Error("code or token is required for verification");
+		}
+		if (code && (!token || !id)) {
+			throw new Error("id and token are required when verifying with code");
+		}
+
+		const conditions = [
+			eq($schema.unitOTP.type, type),
+			isNull($schema.unitOTP.revokedAt),
+		];
+		if (id) {
+			conditions.push(eq($schema.unitOTP.id, id));
+		}
+		if (code) {
+			conditions.push(eq($schema.unitOTP.code, code));
+		}
+		if (token) {
+			conditions.push(eq($schema.unitOTP.token, token));
+		}
+		if (unitId) {
+			conditions.push(eq($schema.unitOTP.unitId, unitId));
+		}
+
+		try {
+			const records = await db
+				.select()
+				.from($schema.unitOTP)
+				.where(and(...conditions));
+
+			if (records.length === 0) {
+				throw new Error("OTP record not found or already revoked");
+			}
+			if (records.length > 1) {
+				throw new Error("ambigous verifier");
+			}
+
+			const record = records[0];
+
+			if (!record) {
+				return { result: false as const, record: null };
+			}
+			if (record.expiresAt < new Date()) {
+				throw new Error("OTP has expired");
+			}
+
+			if (opts?.revokeOnVerify) {
+				await this.update(
+					{ type, verifier: { id: record.id }, opts: { allowMultiple: false } },
+					{ revokedAt: new Date() },
+				);
+			}
+
+			return { result: true as const, record };
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	private async update(
+		{
+			type,
+			verifier,
+			opts,
+		}: {
+			type: $schema.UnitOTPType;
+			verifier: { id?: string; unitId?: string; token?: string };
+			opts?: { unrevokedOnly?: boolean; allowMultiple?: boolean };
+		},
+		data:
+			| Partial<typeof $schema.unitOTP.$inferSelect>
+			| Record<string, SQL<any>>,
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		const { id, token, unitId } = verifier;
+		opts = defu(opts, { unrevokedOnly: true, allowMultiple: false });
+
+		if (!id && !token && !unitId) {
+			throw new Error("id, token, or unitId is required");
+		}
+
+		const conditions = [eq($schema.unitOTP.type, type)];
+		if (id) {
+			conditions.push(eq($schema.unitOTP.id, id));
+		}
+		if (token) {
+			conditions.push(eq($schema.unitOTP.token, token));
+		}
+		if (unitId) {
+			conditions.push(eq($schema.unitOTP.unitId, unitId));
+		}
+		if (opts.unrevokedOnly) {
+			conditions.push(isNull($schema.unitOTP.revokedAt));
+		}
+
+		try {
+			return await db.transaction(async (tx) => {
+				const records = await tx
+					.select()
+					.from($schema.unitOTP)
+					.where(and(...conditions));
+
+				if (!opts?.allowMultiple && records.length === 0) {
+					throw new Error("OTP record not found");
+				}
+				if (!opts?.allowMultiple && records.length !== 1) {
+					throw new Error("ambigous verifier");
+				}
+
+				const updates = await tx
+					.update($schema.unitOTP)
+					.set(data)
+					.where(and(...conditions))
+					.returning();
+				if (updates.length === 0) {
+					throw new Error("Fail to update OTP record");
+				}
+
+				return opts?.allowMultiple ? updates : updates[0];
+			});
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async generateVehicleManagement(
+		data: { unitId?: string },
+		tx?: DrizzleTursoTransaction,
+	) {
+		if (!data.unitId) {
+			throw new Error("unitId are required");
+		}
+
+		try {
+			return this.generate(
+				{ type: $schema.UnitOTPType.VehicleManagement, data },
+				tx,
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async verifyVehicleManagement(
+		verifier: { unitId: string; token: string },
+		revoke: boolean = true,
+		tx?: DrizzleTursoTransaction,
+	) {
+		if (!verifier.unitId || !verifier.token) {
+			throw new Error("unitId and token are required");
+		}
+
+		try {
+			return this.verify(
+				{
+					type: $schema.UnitOTPType.VehicleManagement,
+					verifier,
+					opts: { revokeOnVerify: revoke },
+				},
+				tx,
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	}
+
+	async updateVehicleManagement(
+		{
+			verifier,
+			opts,
+		}: {
+			verifier: { unitId?: string; token?: string };
+			opts?: { unrevokedOnly?: boolean; allowMultiple?: boolean };
+		},
+		data:
+			| Partial<typeof $schema.unitOTP.$inferSelect>
+			| Record<string, SQL<any>>,
+		tx?: DrizzleTursoTransaction,
+	) {
+		const { unitId, token } = verifier;
+
+		if (!unitId && !token) {
+			throw new Error("unitId or token are required");
+		}
+
+		try {
+			return await this.update(
+				{
+					type: $schema.UnitOTPType.VehicleManagement,
+					verifier,
+					opts,
+				},
+				data,
+				tx,
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
 		}
 	}
 }
