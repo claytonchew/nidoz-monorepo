@@ -19,5 +19,5 @@ export default defineNuxtConfig({
 		["@nidoz/ui", { install: true }],
 	],
 
-	modules: ["nuxt-auth-utils", "@nuxt/ui"],
+	modules: ["nuxt-auth-utils", "@nuxt/ui", "@vueuse/nuxt"],
 });

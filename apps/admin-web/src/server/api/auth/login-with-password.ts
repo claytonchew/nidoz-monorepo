@@ -5,7 +5,7 @@ async function handleUserValidation(
 	password: string,
 	t: Awaited<ReturnType<typeof useTranslation>>,
 ) {
-	const user = await adminService.getByEmail(email);
+	const user = await adminQueries.getByEmail(email);
 
 	if (!user) {
 		throw createError({

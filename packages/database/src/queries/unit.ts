@@ -145,19 +145,19 @@ export class UnitQueries {
 
 			const conditions: any[] = [];
 			if (filters) {
-				if (filters.block) {
+				if (filters.block && filters.block !== "all") {
 					conditions.push(eq($schema.unit.block, filters.block));
 				}
-				if (filters.floor) {
+				if (filters.floor && filters.floor !== "all") {
 					conditions.push(eq($schema.unit.floor, filters.floor));
 				}
-				if (filters.number) {
+				if (filters.number && filters.number !== "all") {
 					conditions.push(eq($schema.unit.number, filters.number));
 				}
 			}
 			if (search) {
 				try {
-					const unit = parseResidentialUnit(search);
+					const unit = parseResidentialUnit(search.trim());
 					conditions.push(
 						and(
 							eq($schema.unit.block, unit.block),
@@ -165,7 +165,14 @@ export class UnitQueries {
 							eq($schema.unit.number, unit.number),
 						),
 					);
-				} catch {}
+				} catch {
+					return {
+						records: [],
+						totalCount: 0,
+						page,
+						pageSize,
+					};
+				}
 			}
 			if (conditions.length) {
 				query = query.where(and(...conditions));

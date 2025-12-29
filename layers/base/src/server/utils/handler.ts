@@ -23,7 +23,9 @@ export const defineAPIEventHandler = <T extends EventHandlerRequest, D>(
 	handler: APIEventHandler<T, D>,
 ): EventHandler<T, D> =>
 	defineEventHandler<T>(async (event) => {
-		const t = await useTranslation(event);
+		// const t = await useTranslation(event);
+		// FIXME: something is not right
+		const t = (val: string) => val;
 
 		try {
 			return await handler(event, { t });

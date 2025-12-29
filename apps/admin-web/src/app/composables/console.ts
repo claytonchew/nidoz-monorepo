@@ -8,7 +8,8 @@ export const useConsole = () => {
 			{
 				label: "Home",
 				icon: "lucide:home",
-				to: "/",
+				to: "/console",
+				exact: true,
 				onSelect: () => {
 					open.value = false;
 				},
@@ -16,7 +17,7 @@ export const useConsole = () => {
 			{
 				label: "Vehicles",
 				icon: "lucide:car-front",
-				to: "/vehicles",
+				to: "/console/vehicles",
 				onSelect: () => {
 					open.value = false;
 				},

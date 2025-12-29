@@ -6,13 +6,11 @@
 					<UDashboardSidebarCollapse/>
 				</template>
 			</UDashboardNavbar>
-
-			<UDashboardToolbar>
-				<template #left>Left Buttons</template>
-			</UDashboardToolbar>
 		</template>
 
-		<template #body>Home</template>
+		<template #body>
+			<span class="text-dimmed">Coming soon...</span>
+		</template>
 	</UDashboardPanel>
 </template>
 
@@ -22,6 +20,6 @@ definePageMeta({
 });
 
 useSeoMeta({
-	title: $t("Home"),
+	title: "Home",
 });
 </script>

@@ -5,7 +5,7 @@ export default defineAPIEventHandler(async (event, { t }) => {
 		return false;
 	}
 
-	const user = await adminService.get(session.user.id);
+	const user = await adminQueries.get(session.user.id);
 
 	if (!user) {
 		await clearUserSession(event);

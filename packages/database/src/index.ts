@@ -4,3 +4,4 @@ export * from "./module/migrator";
 export * from "./module/seed";
 export * from "./queries";
 export * as $schema from "./schema";
+export * from "./constants";
