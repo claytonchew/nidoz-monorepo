@@ -6,17 +6,22 @@
 					<UDashboardSidebarCollapse/>
 				</template>
 			</UDashboardNavbar>
+
+			<UDashboardToolbar>
+				<template #left>
+					<UInput
+						v-model="search"
+						class="max-w-sm"
+						icon="lucide:search"
+						placeholder="e.g. A-08-01 or A0801"
+						variant="none"
+						:highlight="Boolean(search)"
+					/>
+				</template>
+			</UDashboardToolbar>
 		</template>
 
 		<template #body>
-			<div class="flex flex-wrap items-center justify-between gap-1.5">
-				<UInput
-					v-model="search"
-					class="max-w-sm"
-					icon="lucide:search"
-					placeholder="e.g. A-08-01 or A0801"
-				/>
-			</div>
 			<TableVehicles
 				:data="records"
 				:get-action-items="getActionItems"
@@ -55,6 +60,10 @@ const sort = ref<"asc" | "desc">("asc");
 
 const search = ref<string>("");
 const debouncedSearch = refDebounced(search, 350);
+
+watch([debouncedSearch], () => {
+	page.value = 1;
+});
 
 const total = ref(0);
 const paginationLabel = computed(() => {
