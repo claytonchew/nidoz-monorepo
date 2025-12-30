@@ -2,7 +2,7 @@ import type { H3Event } from "h3";
 
 export default defineI18nLocaleDetector((event, config) => {
 	const query = getQuery(event);
-	if (query && query.ui_locales) {
+	if (query?.ui_locales) {
 		return setAndReturnLocale(
 			event,
 			(query.ui_locales as string).split(" ")[0]?.toString() as string,

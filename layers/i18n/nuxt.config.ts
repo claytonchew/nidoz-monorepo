@@ -46,5 +46,9 @@ export default defineNuxtConfig({
 		experimental: {
 			localeDetector: "localeDetector.ts",
 		},
+		// Issue: https://github.com/nuxt-modules/i18n/issues/3238#issuecomment-2672492536
+		bundle: {
+			optimizeTranslationDirective: false,
+		},
 	},
 });

@@ -12,7 +12,7 @@
 		"postinstall": "nuxt prepare .playground"
 	},
 	"dependencies": {
-		"@nuxtjs/i18n": "^10.2.1",
+		"@nuxtjs/i18n": "^9.3.3",
 		"nuxt": "catalog:"
 	},
 	"devDependencies": {
