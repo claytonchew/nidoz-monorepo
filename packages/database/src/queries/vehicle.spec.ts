@@ -251,4 +251,12 @@ describe("VehicleQueries", async () => {
 			expect(link.revokedAt).not.toBeNull();
 		}
 	});
+
+	it("should return null if unit does not exist", async () => {
+		const link1 = await vehicleQueries.getVehicleManagementLink(`A-99-99`);
+		expect(link1).toBeNull();
+
+		const link2 = await vehicleQueries.getVehicleManagementLink(`A-32-05`);
+		expect(link2).toBeNull();
+	});
 });
