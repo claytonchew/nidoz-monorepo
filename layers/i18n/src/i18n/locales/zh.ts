@@ -1,5 +1,16 @@
 export default {
+	ui: {
+		safeTemplate: {
+			error: {
+				title: "意外错误",
+				description: "无法检索资源。请重试。",
+				retry: "重试",
+			},
+		},
+	},
 	Welcome: "欢迎",
+	Successful: "成功",
+	Unsuccessful: "不成功",
 	InternalServerError: "内部服务器错误",
 	ValidationError: "验证错误",
 	InvalidCredentials: "无效的凭据",
@@ -10,10 +21,17 @@ export default {
 	EnterYourX: "输入您的{field}",
 	EnterX: "输入{field}",
 	CannotBeEmpty: "{field}不能为空",
+	Save: "保存",
 	Email: "电子邮件",
 	Password: "密码",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"请检查您的电子邮件和密码，然后重试。",
 	Login: "登录",
 	LoginDescription: "输入您的凭据以访问您的帐户。",
+	Vehicle: "车辆",
+	Vehicles: "车辆",
+	VehicleInformationUpdated: "车辆信息已更新",
+	NumberPlate: "车牌号",
+	Model: "型号",
+	Color: "颜色",
 };

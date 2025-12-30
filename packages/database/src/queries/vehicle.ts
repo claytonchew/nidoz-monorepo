@@ -1,5 +1,5 @@
 import { parseResidentialUnit } from "@nidoz/utils";
-import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import { and, eq, getTableColumns, sql, inArray } from "drizzle-orm";
 import { toSnakeCase } from "drizzle-orm/casing";
 import type {
 	DrizzleTursoClient,
@@ -16,36 +16,77 @@ export class VehicleQueries {
 	}
 
 	async upsertMultiple(
+		unitId: string,
 		vehicles: (typeof $schema.vehicle.$inferInsert)[],
 		tx?: DrizzleTursoTransaction,
 	) {
 		const db = tx ?? this.$db;
 		try {
-			const records = await db
-				.insert($schema.vehicle)
-				.values(vehicles)
-				.onConflictDoUpdate({
-					target: $schema.vehicle.id,
-					set: {
-						unitId: sql.raw(
-							`excluded.${toSnakeCase($schema.vehicle.unitId.name)}`,
+			const records = await db.transaction(async (tx) => {
+				if (!vehicles.length) {
+					await tx
+						.delete($schema.vehicle)
+						.where(eq($schema.vehicle.unitId, unitId));
+					return [];
+				}
+
+				const existingVehicles = await this.getAllByUnitId(unitId, tx);
+				const toRemove = existingVehicles.filter(
+					(ev) => !vehicles.some((v) => v.id === ev.id),
+				);
+
+				if (toRemove.length) {
+					await tx.delete($schema.vehicle).where(
+						inArray(
+							$schema.vehicle.id,
+							toRemove.map((v) => v.id),
 						),
-						numberPlate: sql.raw(
-							`excluded.${toSnakeCase($schema.vehicle.numberPlate.name)}`,
-						),
-						model: sql.raw(
-							`excluded.${toSnakeCase($schema.vehicle.model.name)}`,
-						),
-						color: sql.raw(
-							`excluded.${toSnakeCase($schema.vehicle.color.name)}`,
-						),
-					},
-				})
-				.returning();
+					);
+				}
+
+				const upserted = await tx
+					.insert($schema.vehicle)
+					.values(vehicles)
+					.onConflictDoUpdate({
+						target: $schema.vehicle.id,
+						set: {
+							unitId: sql.raw(
+								`excluded.${toSnakeCase($schema.vehicle.unitId.name)}`,
+							),
+							numberPlate: sql.raw(
+								`excluded.${toSnakeCase($schema.vehicle.numberPlate.name)}`,
+							),
+							model: sql.raw(
+								`excluded.${toSnakeCase($schema.vehicle.model.name)}`,
+							),
+							color: sql.raw(
+								`excluded.${toSnakeCase($schema.vehicle.color.name)}`,
+							),
+						},
+					})
+					.returning();
+
+				return upserted;
+			});
 			return records;
 		} catch (error) {
 			console.error(error);
 			throw error;
+		}
+	}
+
+	async getAllByUnitId(unitId: string, tx?: DrizzleTursoTransaction) {
+		const db = tx ?? this.$db;
+		try {
+			const records = await db
+				.select()
+				.from($schema.vehicle)
+				.where(eq($schema.vehicle.unitId, unitId));
+
+			return records;
+		} catch (error) {
+			console.warn(error);
+			return [];
 		}
 	}
 

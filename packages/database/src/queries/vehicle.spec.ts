@@ -55,7 +55,7 @@ describe("VehicleQueries", async () => {
 			},
 		];
 
-		const records = await vehicleQueries.upsertMultiple(vehicles);
+		const records = await vehicleQueries.upsertMultiple(units[0].id, vehicles);
 
 		expect(records.length).toBe(2);
 
@@ -88,7 +88,7 @@ describe("VehicleQueries", async () => {
 			},
 		];
 
-		const records = await vehicleQueries.upsertMultiple(vehicles);
+		const records = await vehicleQueries.upsertMultiple(units[1].id, vehicles);
 
 		expect(records.length).toBe(2);
 
@@ -98,6 +98,36 @@ describe("VehicleQueries", async () => {
 			expect(record).toHaveProperty("model", vehicles[index].model);
 			expect(record).toHaveProperty("color", vehicles[index].color);
 		}
+	});
+
+	it("should be deterministic (remove if does not contain existing)", async () => {
+		const vehicles = [
+			{
+				unitId: units[1].id,
+				numberPlate: "B1",
+				model: "Honda Civic",
+				color: "Blue",
+			},
+		];
+
+		const records = await vehicleQueries.upsertMultiple(units[1].id, vehicles);
+
+		expect(records.length).toBe(1);
+
+		for (const [index, record] of records.entries()) {
+			expect(record).toHaveProperty("unitId", vehicles[index].unitId);
+			expect(record).toHaveProperty("numberPlate", vehicles[index].numberPlate);
+			expect(record).toHaveProperty("model", vehicles[index].model);
+			expect(record).toHaveProperty("color", vehicles[index].color);
+		}
+	});
+
+	it("should be deterministic (remove all if empty array is given)", async () => {
+		const vehicles: any[] = [];
+
+		const records = await vehicleQueries.upsertMultiple(units[1].id, vehicles);
+
+		expect(records.length).toBe(0);
 	});
 
 	it("should get all by units", async () => {

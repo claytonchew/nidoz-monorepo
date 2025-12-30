@@ -1,5 +1,16 @@
 export default {
+	ui: {
+		safeTemplate: {
+			error: {
+				title: "Unexpected Error",
+				description: "Unable to retrieve resource. Please try again.",
+				retry: "Retry",
+			},
+		},
+	},
 	Welcome: "Welcome",
+	Successful: "Successful",
+	Unsuccessful: "Unsuccessful",
 	InternalServerError: "Internal Server Error",
 	ValidationError: "Validation Error",
 	InvalidCredentials: "Invalid credentials",
@@ -10,10 +21,17 @@ export default {
 	EnterYourX: "Enter your {field}",
 	EnterX: "Enter {field}",
 	CannotBeEmpty: "Cannot be empty",
+	Save: "Save",
 	Email: "Email",
 	Password: "Password",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"Please check your email and password and try again.",
 	Login: "Login",
 	LoginDescription: "Enter your credentials to access your account.",
+	Vehicle: "Vehicle",
+	Vehicles: "Vehicles",
+	VehicleInformationUpdated: "Vehicle(s) information updated",
+	NumberPlate: "Number Plate",
+	Model: "Model",
+	Color: "Color",
 };

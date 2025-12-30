@@ -32,7 +32,7 @@ describe("UnitQueries", async () => {
 
 	it("should get units (each with vehicles information)", async () => {
 		const unitRecord = await unitQueries.getByUnit("A-17-3A");
-		const vehiclesData = await vehicleQueries.upsertMultiple([
+		const vehiclesData = await vehicleQueries.upsertMultiple(unitRecord!.id, [
 			{
 				unitId: unitRecord!.id,
 				numberPlate: "A1",

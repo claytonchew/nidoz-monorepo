@@ -8,21 +8,20 @@
 			</UDashboardNavbar>
 
 			<UDashboardToolbar>
-				<template #left>
-					<UInput
-						v-model="search"
-						class="max-w-sm"
-						icon="lucide:search"
-						placeholder="e.g. A-08-01 or A0801"
-						variant="none"
-						:highlight="Boolean(search)"
-					/>
-				</template>
+				<UInput
+					v-model="search"
+					class="w-full"
+					icon="lucide:search"
+					placeholder="e.g. A-08-01 or A0801"
+					variant="none"
+					:highlight="Boolean(search)"
+				/>
 			</UDashboardToolbar>
 		</template>
 
 		<template #body>
 			<TableVehicles
+				v-if="tableVisibility"
 				:data="records"
 				:get-action-items="getActionItems"
 				:loading="status === 'pending'"
@@ -50,6 +49,7 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import type { DropdownMenuProps } from "#ui/types";
+import { LazyModalVehicles } from "#components";
 
 useSeoMeta({
 	title: "Vehicles",
@@ -83,10 +83,23 @@ const { data, status, refresh } = useAPI("/api/vehicles", {
 	},
 });
 
+const tableVisibility = ref(true);
+const refreshTable = () => {
+	tableVisibility.value = false;
+	nextTick(() => {
+		tableVisibility.value = true;
+	});
+};
 const records = computed(() => data.value?.records ?? []);
+whenever(data, () => {
+	refreshTable();
+});
 watchEffect(() => {
 	total.value = data.value?.totalCount ?? 0;
 });
+
+const overlay = useOverlay();
+const modalVehicle = overlay.create(LazyModalVehicles);
 
 const getActionItems = computed(
 	() =>
@@ -101,6 +114,14 @@ const getActionItems = computed(
 				{
 					label: "Edit Vehicles",
 					icon: "lucide:car-front",
+					onSelect: () => {
+						modalVehicle.open({
+							unit: `${row.original.block}-${row.original.floor}-${row.original.number}`,
+							onRefresh: () => {
+								refresh();
+							},
+						});
+					},
 				},
 				{
 					type: "separator",

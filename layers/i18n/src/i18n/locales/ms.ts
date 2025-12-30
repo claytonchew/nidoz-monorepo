@@ -1,5 +1,16 @@
 export default {
+	ui: {
+		safeTemplate: {
+			error: {
+				title: "Ralat Tidak Dijangka",
+				description: "Tidak dapat memuat turun sumber. Sila cuba sekali lagi.",
+				retry: "Cuba Lagi",
+			},
+		},
+	},
 	Welcome: "Selamat datang",
+	Successful: "Berjaya",
+	Unsuccessful: "Tidak Berjaya",
 	InternalServerError: "Ralat Server Dalaman",
 	ValidationError: "Ralat Pengesahan",
 	InvalidCredentials: "Kelayakan tidak sah",
@@ -10,10 +21,17 @@ export default {
 	EnterYourX: "Masukkan {field} anda",
 	EnterX: "Masukkan {field}",
 	CannotBeEmpty: "{field} tidak boleh kosong",
+	Save: "Simpan",
 	Email: "Emel",
 	Password: "Kata Laluan",
 	PleaseCheckYourEmailAndPasswordAndTryAgain:
 		"Sila semak emel dan kata laluan anda dan cuba lagi.",
 	Login: "Log Masuk",
 	LoginDescription: "Masukkan kelayakan anda untuk mengakses akaun anda.",
+	Vehicle: "Kenderaan",
+	Vehicles: "Kenderaan",
+	VehicleInformationUpdated: "Maklumat Kenderaan Dikemas Kini",
+	NumberPlate: "Nombor Plat",
+	Model: "Model",
+	Color: "Warna",
 };
