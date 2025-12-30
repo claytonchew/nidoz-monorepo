@@ -4,6 +4,9 @@
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
 	"languages": {
+		"Vue.js": {
+			"formatter": { "language_server": { "name": "biome" } }
+		},
 		"JSON": {
 			"formatter": { "language_server": { "name": "biome" } }
 		},
