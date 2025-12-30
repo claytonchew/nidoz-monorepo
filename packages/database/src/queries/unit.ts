@@ -104,8 +104,23 @@ export class UnitQueries {
 					.groupBy($schema.vehicle.unitId),
 			);
 
+			const vehicleManagementLinkQuery = db
+				.$with("vehicle_management_link_query")
+				.as(
+					db
+						.select({
+							unitId: $schema.unitOTP.unitId,
+							hasLink: sql<number>`1`.as("hasLink"),
+						})
+						.from($schema.unitOTP)
+						.where(
+							eq($schema.unitOTP.type, $schema.UnitOTPType.VehicleManagement),
+						)
+						.groupBy($schema.unitOTP.unitId),
+				);
+
 			let query = db
-				.with(vehiclesQuery)
+				.with(vehiclesQuery, vehicleManagementLinkQuery)
 				.select({
 					...getTableColumns($schema.unit),
 					vehicles:
@@ -119,6 +134,10 @@ export class UnitQueries {
 							});
 							return parsed;
 						}),
+					hasVehicleManagementLinkGenerated:
+						sql<boolean>`CASE WHEN ${vehicleManagementLinkQuery.hasLink} IS NOT NULL THEN 1 ELSE 0 END`.mapWith(
+							(val: number) => Boolean(val),
+						),
 				})
 				.from($schema.unit)
 				.orderBy(
@@ -135,6 +154,10 @@ export class UnitQueries {
 							]),
 				)
 				.leftJoin(vehiclesQuery, eq($schema.unit.id, vehiclesQuery.unitId))
+				.leftJoin(
+					vehicleManagementLinkQuery,
+					eq($schema.unit.id, vehicleManagementLinkQuery.unitId),
+				)
 				.limit(pageSize)
 				.offset(offset)
 				.$dynamic();

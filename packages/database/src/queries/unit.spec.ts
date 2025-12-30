@@ -30,6 +30,21 @@ describe("UnitQueries", async () => {
 		expect(units.records.length).toBe(100);
 	});
 
+	it("should return hasVehicleManagementLinkGenerated: `true` if link has been generated prior", async () => {
+		await vehicleQueries.createVehicleManagementLink("A-32-05");
+		const units = await unitQueries.getAll({
+			filters: { block: "A", floor: "32" },
+		});
+
+		expect(units.records.find((u) => u.number === "05")).toHaveProperty(
+			"hasVehicleManagementLinkGenerated",
+			true,
+		);
+		for (const unit of units.records.filter((u) => u.number !== "05")) {
+			expect(unit).toHaveProperty("hasVehicleManagementLinkGenerated", false);
+		}
+	});
+
 	it("should get units (each with vehicles information)", async () => {
 		const unitRecord = await unitQueries.getByUnit("A-17-3A");
 		const vehiclesData = await vehicleQueries.upsertMultiple(unitRecord!.id, [

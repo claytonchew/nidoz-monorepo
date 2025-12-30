@@ -42,6 +42,20 @@
 			</UAvatarGroup>
 			<span class="text-dimmed" v-else> No vehicles registered. </span>
 		</template>
+
+		<template #hasVehicleManagementLinkGenerated-cell="{ row }">
+			<UTooltip
+				:content="{side: 'top'}"
+				:text="row.original.hasVehicleManagementLinkGenerated ? 'Link was generated before' : 'Link was not generated yet'"
+			>
+				<UIcon
+					v-if="row.original.hasVehicleManagementLinkGenerated"
+					name="lucide:check-circle"
+					class="size-5 text-success"
+				/>
+				<UIcon v-else name="lucide:x-circle" class="size-5 text-dimmed"/>
+			</UTooltip>
+		</template>
 	</UTable>
 </template>
 
@@ -130,6 +144,10 @@ const columns: ComputedRef<
 	{
 		header: "Vehicles",
 		accessorKey: "vehicles",
+	},
+	{
+		header: "Link Generated",
+		accessorKey: "hasVehicleManagementLinkGenerated",
 	},
 	{
 		id: "actions",
