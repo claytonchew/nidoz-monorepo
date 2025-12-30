@@ -1,18 +1,29 @@
 import { parseResidentialUnit } from "@nidoz/utils";
-import { and, eq, getTableColumns, sql, inArray } from "drizzle-orm";
+import {
+	and,
+	eq,
+	getTableColumns,
+	gt,
+	inArray,
+	isNull,
+	sql,
+} from "drizzle-orm";
 import { toSnakeCase } from "drizzle-orm/casing";
 import type {
 	DrizzleTursoClient,
 	DrizzleTursoTransaction,
 } from "../module/client";
 import * as $schema from "../schema";
+import { UnitOTPQueries } from "./unit";
 import { constructCommonQueries } from "./utils";
 
 export interface VehicleQueries
 	extends ReturnType<typeof constructCommonQueries<typeof $schema.vehicle>> {}
 export class VehicleQueries {
+	private unitOTPQueries: UnitOTPQueries;
 	constructor(private readonly $db: DrizzleTursoClient) {
 		Object.assign(this, constructCommonQueries(this.$db, $schema.vehicle));
+		this.unitOTPQueries = new UnitOTPQueries(this.$db);
 	}
 
 	async upsertMultiple(
@@ -118,6 +129,111 @@ export class VehicleQueries {
 		} catch (error) {
 			console.warn(error);
 			return [];
+		}
+	}
+
+	async getVehicleManagementLink(unit: string, tx?: DrizzleTursoTransaction) {
+		const db = tx ?? this.$db;
+		try {
+			const parsedUnit = parseResidentialUnit(unit);
+
+			const unitQuery = db.$with("unit_query").as(
+				db
+					.select({ id: $schema.unit.id })
+					.from($schema.unit)
+					.where(
+						and(
+							eq($schema.unit.block, parsedUnit.block),
+							eq($schema.unit.floor, parsedUnit.floor),
+							eq($schema.unit.number, parsedUnit.number),
+						),
+					),
+			);
+
+			const records = await db
+				.with(unitQuery)
+				.select(getTableColumns($schema.unitOTP))
+				.from($schema.unitOTP)
+				.innerJoin(unitQuery, eq($schema.unitOTP.unitId, unitQuery.id))
+				.where(
+					and(
+						eq($schema.unitOTP.type, $schema.UnitOTPType.VehicleManagement),
+						isNull($schema.unitOTP.revokedAt),
+						gt($schema.unitOTP.expiresAt, new Date()),
+					),
+				);
+
+			if (!records.length) {
+				return null;
+			}
+
+			if (records.length > 1) {
+				await db
+					.with(unitQuery)
+					.update($schema.unitOTP)
+					.set({
+						revokedAt: new Date(),
+						revokedReason: "more than one link exists",
+					})
+					.where(
+						and(
+							eq($schema.unitOTP.unitId, sql`(SELECT id FROM ${unitQuery})`),
+							eq($schema.unitOTP.type, $schema.UnitOTPType.VehicleManagement),
+							isNull($schema.unitOTP.revokedAt),
+						),
+					);
+
+				return null;
+			}
+
+			return {
+				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=${records[0].unitId}:${records[0].token}`,
+				expiresAt: records[0].expiresAt,
+			};
+		} catch (error) {
+			console.warn(error);
+			return null;
+		}
+	}
+
+	async createVehicleManagementLink(
+		unit: string,
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		try {
+			const parsedUnit = parseResidentialUnit(unit);
+
+			const [unitRecord] = await db
+				.select()
+				.from($schema.unit)
+				.where(
+					and(
+						eq($schema.unit.block, parsedUnit.block),
+						eq($schema.unit.floor, parsedUnit.floor),
+						eq($schema.unit.number, parsedUnit.number),
+					),
+				);
+
+			if (!unitRecord) {
+				throw new Error("Unit not found");
+			}
+
+			const record = await this.unitOTPQueries.generateVehicleManagement({
+				unitId: unitRecord.id,
+			});
+
+			if (!record) {
+				throw new Error("Failed to create OTP");
+			}
+
+			return {
+				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=${record.unitId}:${record.token}`,
+				expiresAt: record.expiresAt,
+			};
+		} catch (error) {
+			console.error(error);
+			throw error;
 		}
 	}
 }

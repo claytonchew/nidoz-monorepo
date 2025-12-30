@@ -1,8 +1,12 @@
+import { config } from "dotenv";
 import { describe, expect, it } from "vitest";
-import type * as $schema from "../schema";
+import * as $schema from "../schema";
 import { getTestDB } from "../test-utils/get-test-db";
 import { UnitQueries } from "./unit";
 import { VehicleQueries } from "./vehicle";
+import { inArray } from "drizzle-orm";
+
+config({ path: ".env", quiet: true });
 
 describe("VehicleQueries", async () => {
 	const { $db } = await getTestDB();
@@ -154,6 +158,97 @@ describe("VehicleQueries", async () => {
 				"updatedAt",
 				temp.vehicles[index].updatedAt,
 			);
+		}
+	});
+
+	it("should create vehicle management link", async () => {
+		const link = await vehicleQueries.createVehicleManagementLink(
+			`${units[0].block}-${units[0].floor}-${units[0].number}`,
+		);
+
+		expect(
+			link.url.startsWith(
+				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=`,
+			),
+		).toBe(true);
+		expect(link.expiresAt).toBeInstanceOf(Date);
+
+		temp.vehicleManagementLink = link;
+	});
+
+	it("should revoke previous management link if a new one is generated", async () => {
+		const newLink = await vehicleQueries.createVehicleManagementLink(
+			`${units[0].block}-${units[0].floor}-${units[0].number}`,
+		);
+
+		expect(
+			newLink.url.startsWith(
+				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=`,
+			),
+		).toBe(true);
+		expect(newLink.expiresAt).toBeInstanceOf(Date);
+		expect(newLink).not.toStrictEqual(temp.vehicleManagementLink);
+
+		temp.vehicleManagementLink = newLink;
+	});
+
+	it("should get the current management link if generated", async () => {
+		const link = await vehicleQueries.getVehicleManagementLink(
+			`${units[0].block}-${units[0].floor}-${units[0].number}`,
+		);
+
+		expect(link).toStrictEqual(temp.vehicleManagementLink);
+	});
+
+	it("should get null if management link was not generated prior", async () => {
+		const link = await vehicleQueries.getVehicleManagementLink(
+			`${units[1].block}-${units[1].floor}-${units[1].number}`,
+		);
+
+		expect(link).toBeNull();
+	});
+
+	it("should automatically revoke if there exist more than 1 links", async () => {
+		// Manually insert duplicate links
+		const links = await $db
+			.insert($schema.unitOTP)
+			.values([
+				{
+					id: "link1",
+					type: $schema.UnitOTPType.VehicleManagement,
+					unitId: units[1].id,
+					code: "11111111",
+					token: "LINKA",
+					expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+					revokedAt: null,
+					revokedReason: null,
+				},
+				{
+					id: "link2",
+					type: $schema.UnitOTPType.VehicleManagement,
+					unitId: units[1].id,
+					code: "22222222",
+					token: "LINKB",
+					expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+					revokedAt: null,
+					revokedReason: null,
+				},
+			])
+			.returning();
+
+		const result = await vehicleQueries.getVehicleManagementLink(
+			`${units[1].block}-${units[1].floor}-${units[1].number}`,
+		);
+
+		expect(result).toBeNull();
+
+		const checkLinks = await $db
+			.select()
+			.from($schema.unitOTP)
+			.where(inArray($schema.unitOTP.id, [links[0].id, links[1].id]));
+
+		for (const link of checkLinks) {
+			expect(link.revokedAt).not.toBeNull();
 		}
 	});
 });
