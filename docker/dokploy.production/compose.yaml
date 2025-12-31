@@ -10,7 +10,7 @@ services:
             database-manager-xaox1z1:
                 condition: service_completed_successfully
             turso-xaox1z1:
-                condition: service_healthy
+                condition: service_started
         expose:
             - 80
         labels:
@@ -44,7 +44,7 @@ services:
             database-manager-xaox1z1:
                 condition: service_completed_successfully
             turso-xaox1z1:
-                condition: service_healthy
+                condition: service_started
         expose:
             - 80
         labels:
@@ -77,7 +77,7 @@ services:
             target: database-manager
         depends_on:
             turso-xaox1z1:
-                condition: service_healthy
+                condition: service_started
         environment:
             - NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
             - NUXT_PUBLIC_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
