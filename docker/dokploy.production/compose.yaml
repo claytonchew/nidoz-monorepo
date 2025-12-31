@@ -99,3 +99,8 @@ services:
             - "${TURSO_HTTP_PORT:-36100}:8080"
             - "${TURSO_GRPC_PORT:-36101}:5001"
         restart: always
+
+networks:
+    default:
+        name: dokploy-network
+        external: true
