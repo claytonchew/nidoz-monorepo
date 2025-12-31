@@ -75,12 +75,13 @@
 <script lang="ts">
 import type { FetchError } from "ofetch";
 import type { AsyncDataRequestStatus } from "nuxt/app";
-// biome-ignore-start assist: wrongly detected as type
-import type { TransitionFade, TransitionSlide } from "#components";
-// biome-ignore-end assist: wrongly detected as type
 import type { TransitionFadeProps } from "./Transition/Fade.vue";
 import type { TransitionSlideProps } from "./Transition/Slide.vue";
 import { twMerge } from "tailwind-merge";
+import { resolveComponent } from "vue";
+
+const TransitionFade = resolveComponent("TransitionFade");
+const TransitionSlide = resolveComponent("TransitionSlide");
 
 type TemplateTransition<T> = T extends "fade"
 	? typeof TransitionFade
