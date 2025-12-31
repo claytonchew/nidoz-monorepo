@@ -6,7 +6,7 @@
 				transition-mode="slide"
 			>
 				<div>
-					<UCard :ui="{ body: 'space-y-4'}">
+					<div class="space-y-4">
 						<!-- case 1: expired link -->
 						<template
 							v-if="data && data.link && new Date(data.link.expiresAt) <= new Date()"
@@ -87,22 +87,23 @@
 								@click="generateLink"
 							/>
 						</template>
-					</UCard>
+					</div>
 				</div>
 			</SafeContainer>
-			<template v-if="data?.link?.url">
-				<div class="flex flex-wrap mt-4 gap-3">
-					<UButton
-						label="Generate New"
-						:loading="loading"
-						@click="generateLink"
-						color="neutral"
-					/>
-					<UBadge color="neutral" variant="soft" icon="lucide:info">
-						Generate new link will delete the existing link.
-					</UBadge>
-				</div>
-			</template>
+		</template>
+
+		<template v-if="data?.link?.url" #footer>
+			<div class="flex flex-wrap gap-3">
+				<UButton
+					label="Generate New"
+					:loading="loading"
+					@click="generateLink"
+					color="neutral"
+				/>
+				<UBadge color="neutral" variant="soft" icon="lucide:info">
+					Generate new link will delete the existing link.
+				</UBadge>
+			</div>
 		</template>
 	</UModal>
 </template>
