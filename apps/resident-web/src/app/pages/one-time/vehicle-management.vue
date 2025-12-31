@@ -1,5 +1,10 @@
 <template>
-	<UPageCard variant="outline" class="max-w-md w-full m-4">
+	<UPageCard
+		:title="t('VehiclesRegistration')"
+		icon="lucide:car-front"
+		variant="outline"
+		class="max-w-md w-full m-4"
+	>
 		<TransitionFade>
 			<template v-if="!showSuccess">
 				<div class="space-y-4">

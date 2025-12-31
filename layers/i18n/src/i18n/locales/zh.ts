@@ -42,4 +42,6 @@ export default {
 	IfThisIsNotYourUnitPleaseContactManagement:
 		"如果这不是您的单位，请联系管理部门。",
 	VehiclesInformationUpdatedExpiredLink: "车辆信息已更新。此链接已失效。",
+	VehiclesRegistration: "车辆注册",
+	AddVehicle: "添加车辆",
 };

@@ -44,4 +44,6 @@ export default {
 		"Jika ini bukan unit anda, sila hubungi pihak pengurusan.",
 	VehiclesInformationUpdatedExpiredLink:
 		"Maklumat Kenderaan Dikemas Kini. Pautan ini kini telah tamat tempoh.",
+	VehiclesRegistration: "Pendaftaran Kenderaan",
+	AddVehicle: "Tambah Kenderaan",
 };

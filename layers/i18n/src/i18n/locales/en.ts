@@ -44,4 +44,6 @@ export default {
 		"If this is not your unit, please contact management.",
 	VehiclesInformationUpdatedExpiredLink:
 		"Vehicles information updated. This link is now expired.",
+	VehiclesRegistration: "Vehicles Registration",
+	AddVehicle: "Add Vehicle",
 };

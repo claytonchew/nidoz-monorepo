@@ -48,6 +48,7 @@
 				<UButton
 					v-if="Array.isArray(state.vehicles) ? state.vehicles.length < 4 : true"
 					icon="lucide:plus"
+					:label="t('AddVehicle')"
 					class="w-full justify-center text-muted"
 					variant="outline"
 					color="neutral"
