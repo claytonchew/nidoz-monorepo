@@ -35,7 +35,8 @@ const useMigrator = () => {
 		_migrator = createTursoMigrator(useDB(), {
 			migrationsFolder: import.meta.dev
 				? path.join(__dirname, "../../../../packages/database/src/migrations")
-				: path.join(__dirname, "../migrations"),
+				: // only for production build in docker
+					"/app/.output/migrations",
 		});
 	}
 
