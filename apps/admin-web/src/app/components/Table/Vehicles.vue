@@ -114,7 +114,7 @@ const columns: ComputedRef<
 		cell: ({ row }) => {
 			return h(
 				UBadge,
-				{ color: "primary", variant: "outline" },
+				{ color: "primary", variant: "solid" },
 				() => row.original.block,
 			);
 		},
