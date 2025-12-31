@@ -1,13 +1,13 @@
-import { config } from "dotenv";
+import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createTursoClient } from "../module/client";
-import { getFormattedDate } from "./get-formatted-date";
-import { generateRandomTag } from "./get-random-tag";
+import { config } from "dotenv";
+import { drizzle } from "drizzle-orm/libsql";
 import { afterAll } from "vitest";
-import { rm, mkdir } from "node:fs/promises";
 import { createTursoMigrator } from "../module/migrator";
 import { createTursoSeeder, type SeedConfig } from "../module/seed";
+import { getFormattedDate } from "./get-formatted-date";
+import { generateRandomTag } from "./get-random-tag";
 
 config({ path: ".env", quiet: true });
 
@@ -30,7 +30,7 @@ export async function getTestDB(config: TestDBConfig = {}) {
 	await mkdir(dbDir, { recursive: true });
 
 	const dbFile = path.join(dbDir, `${dbName}.db`);
-	const db = createTursoClient({
+	const db = drizzle({
 		connection: { url: `file:${dbFile}` },
 		casing: "snake_case",
 	});
