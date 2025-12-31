@@ -1,7 +1,10 @@
 <template>
 	<UModal :title="t('Vehicles')">
 		<template #body>
-			<SafeContainer v-bind="{ data, status, error, refresh }">
+			<SafeContainer
+				v-bind="{ data, status, error, refresh }"
+				transition-mode="slide"
+			>
 				<FormVehicleGroup
 					ref="form"
 					:state="data! as any"
@@ -12,13 +15,17 @@
 		</template>
 
 		<template v-if="data" #footer>
-			<UButton
-				:label="t('Save')"
-				:loading="loading"
-				@click="() => {
+			<div class="flex justify-end w-full">
+				<UButton
+					:label="t('Save')"
+					color="neutral"
+					size="md"
+					:loading="loading"
+					@click="() => {
 				form?.submit()
 			}"
-			/>
+				/>
+			</div>
 		</template>
 	</UModal>
 </template>
