@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@nidoz/database": "workspace:*",
+		"@nidoz/utils": "workspace:*",
 		"nitropack": "catalog:"
 	}
 }
