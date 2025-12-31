@@ -77,12 +77,11 @@ COPY apps/resident-web apps/resident-web
 #    BUILDER CONTAINER    #
 ###########################
 # dockerfile-utils: ignore
-FROM installer AS builder
+FROM installer AS admin-web-builder
 
-# Increase the max old space size for Node.js to handle larger memory requirements
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+WORKDIR /app
 
-RUN pnpm build
+RUN pnpm build:admin-web
 
 ###########################
 #      APP CONTAINER      #
@@ -90,37 +89,7 @@ RUN pnpm build
 # dockerfile-utils: ignore
 FROM base AS admin-web
 # dockerfile-utils: ignore
-COPY --from=builder /app/apps/admin-web/.output /app/.output
-
-ENV HOST=0.0.0.0
-ENV PORT=80
-EXPOSE 80
-ENV NODE_ENV=production
-
-ENTRYPOINT ["node", "--max-http-header-size=32768", "/app/.output/server/index.mjs" ]
-
-###########################
-#      APP CONTAINER      #
-###########################
-# dockerfile-utils: ignore
-FROM base AS database-manager
-# dockerfile-utils: ignore
-COPY --from=builder /app/workers/database-manager/.output /app/.output
-
-ENV HOST=0.0.0.0
-ENV PORT=80
-EXPOSE 80
-ENV NODE_ENV=production
-
-ENTRYPOINT ["node", "/app/.output/server/index.mjs" ]
-
-###########################
-#      APP CONTAINER      #
-###########################
-# dockerfile-utils: ignore
-FROM base AS resident-web
-# dockerfile-utils: ignore
-COPY --from=builder /app/apps/resident-web/.output /app/.output
+COPY --from=admin-web-builder /app/apps/admin-web/.output /app/.output
 
 ENV HOST=0.0.0.0
 ENV PORT=80

@@ -1,0 +1,14 @@
+###########################
+#      APP CONTAINER      #
+###########################
+# dockerfile-utils: ignore
+FROM base AS admin-web
+# dockerfile-utils: ignore
+COPY --from={builder_name} /app/apps/admin-web/.output /app/.output
+
+ENV HOST=0.0.0.0
+ENV PORT=80
+EXPOSE 80
+ENV NODE_ENV=production
+
+ENTRYPOINT ["node", "--max-http-header-size=32768", "/app/.output/server/index.mjs" ]

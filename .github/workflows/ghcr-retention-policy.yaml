@@ -1,0 +1,43 @@
+name: Image Retention Policy
+
+on:
+    workflow_dispatch:
+    # schedule:
+    #     - cron: "0 0 * * 0"
+
+jobs:
+    clean:
+        name: Clean Up
+        permissions:
+            contents: read
+            packages: write
+        runs-on: ubuntu-latest
+        steps:
+            # Remove untagged images older than 1 hour (usually failed builds)
+            - uses: snok/container-retention-policy@v3.0.0
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  account: claytonchew
+                  image-names: "nidoz-monorepo/builder,nidoz-monorepo/admin-web,nidoz-monorepo/resident-web,nidoz-monorepo/database-manager"
+                  tag-selection: untagged
+                  cut-off: 1h
+                  dry-run: false
+            # Remove tagged images order than 2 weeks, keeping only the 10 most recent except for "latest"
+            - uses: snok/container-retention-policy@v3.0.0
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  account: claytonchew
+                  image-names: "nidoz-monorepo/builder,nidoz-monorepo/admin-web,nidoz-monorepo/resident-web,nidoz-monorepo/database-manager"
+                  image-tags: "!latest"
+                  keep-n-most-recent: 10
+                  cut-off: 2w
+                  dry-run: false
+            # Clean up builder cache images
+            - uses: snok/container-retention-policy@v3.0.0
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  account: claytonchew
+                  image-names: "nidoz-monorepo/builder/cache"
+                  keep-n-most-recent: 20
+                  cut-off: 1w
+                  dry-run: false

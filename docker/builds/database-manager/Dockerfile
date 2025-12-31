@@ -40,18 +40,38 @@ COPY pnpm-workspace.yaml ./
 
 # packages workspace
 COPY packages/database/package.json packages/database/
+COPY packages/utils/package.json packages/utils/
 
 # workers workspace
 COPY workers/database-manager/package.json workers/database-manager/
+
+# layers workspace
+COPY layers/base/package.json layers/base/
+COPY layers/i18n/package.json layers/i18n/
+COPY layers/ui/package.json layers/ui/
+
+# apps workspace
+COPY apps/admin-web/package.json apps/admin-web/
+COPY apps/resident-web/package.json apps/resident-web/
 
 # PNPM install
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --ignore-scripts
 
 # packages workspace
 COPY packages/database packages/database
+COPY packages/utils packages/utils
 
 # workers workspace
 COPY workers/database-manager workers/database-manager
+
+# layers workspace
+COPY layers/base layers/base
+COPY layers/i18n layers/i18n
+COPY layers/ui layers/ui
+
+# apps workspace
+COPY apps/admin-web apps/admin-web
+COPY apps/resident-web apps/resident-web
 
 ###########################
 #    BUILDER CONTAINER    #

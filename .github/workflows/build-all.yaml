@@ -1,0 +1,103 @@
+name: Build @nidoz/source
+
+on:
+    workflow_call:
+        inputs:
+            telegram_chat_id:
+                type: string
+                required: true
+            environment:
+                type: string
+                required: true
+            image_tag_prefix:
+                type: string
+                default: ""
+            image_tag:
+                type: string
+                default: ""
+            image_tag_suffix:
+                type: string
+                default: ""
+            generate_short_sha_in_image_tag:
+                type: boolean
+                default: false
+        secrets:
+            telegram_token:
+                required: true
+
+jobs:
+    builder:
+        uses: ./.github/workflows/workflow-build-and-push-to-ghcr.yaml
+        with:
+            runs-on: blacksmith-2vcpu-ubuntu-2404
+            build-name: builder
+            environment: ${{ inputs.environment }}
+            repository: builder
+            cache_repository: builder/cache
+            image_tag: ${{ inputs.image_tag }}
+            image_tag_prefix: ${{ inputs.image_tag_prefix }}
+            image_tag_suffix: ${{ inputs.image_tag_suffix }}
+            generate_short_sha_in_image_tag: ${{ inputs.generate_short_sha_in_image_tag }}
+            context: .
+            dockerfile: docker/builds/Dockerfile
+            target: builder
+            telegram_chat_id: ${{ inputs.telegram_chat_id }}
+        secrets:
+            telegram_token: ${{ secrets.telegram_token }}
+    admin-web:
+        needs: [builder]
+        uses: ./.github/workflows/workflow-build-and-push-to-ghcr.yaml
+        with:
+            runs-on: blacksmith-2vcpu-ubuntu-2404
+            build-name: admin-web
+            environment: ${{ inputs.environment }}
+            repository: admin-web
+            cache_repository: builder/cache
+            image_tag: ${{ inputs.image_tag }}
+            image_tag_prefix: ${{ inputs.image_tag_prefix }}
+            image_tag_suffix: ${{ inputs.image_tag_suffix }}
+            generate_short_sha_in_image_tag: ${{ inputs.generate_short_sha_in_image_tag }}
+            context: .
+            dockerfile: docker/builds/Dockerfile
+            target: admin-web
+            telegram_chat_id: ${{ inputs.telegram_chat_id }}
+        secrets:
+            telegram_token: ${{ secrets.telegram_token }}
+    resident-web:
+        needs: [builder]
+        uses: ./.github/workflows/workflow-build-and-push-to-ghcr.yaml
+        with:
+            runs-on: blacksmith-2vcpu-ubuntu-2404
+            build-name: resident-web
+            environment: ${{ inputs.environment }}
+            repository: resident-web
+            cache_repository: builder/cache
+            image_tag: ${{ inputs.image_tag }}
+            image_tag_prefix: ${{ inputs.image_tag_prefix }}
+            image_tag_suffix: ${{ inputs.image_tag_suffix }}
+            generate_short_sha_in_image_tag: ${{ inputs.generate_short_sha_in_image_tag }}
+            context: .
+            dockerfile: docker/builds/Dockerfile
+            target: resident-web
+            telegram_chat_id: ${{ inputs.telegram_chat_id }}
+        secrets:
+            telegram_token: ${{ secrets.telegram_token }}
+    database-manager:
+        needs: [builder]
+        uses: ./.github/workflows/workflow-build-and-push-to-ghcr.yaml
+        with:
+            runs-on: blacksmith-2vcpu-ubuntu-2404
+            build-name: database-manager
+            environment: ${{ inputs.environment }}
+            repository: database-manager
+            cache_repository: builder/cache
+            image_tag: ${{ inputs.image_tag }}
+            image_tag_prefix: ${{ inputs.image_tag_prefix }}
+            image_tag_suffix: ${{ inputs.image_tag_suffix }}
+            generate_short_sha_in_image_tag: ${{ inputs.generate_short_sha_in_image_tag }}
+            context: .
+            dockerfile: docker/builds/Dockerfile
+            target: database-manager
+            telegram_chat_id: ${{ inputs.telegram_chat_id }}
+        secrets:
+            telegram_token: ${{ secrets.telegram_token }}

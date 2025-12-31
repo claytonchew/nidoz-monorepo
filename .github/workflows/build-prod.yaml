@@ -1,0 +1,84 @@
+name: Build Production
+
+on:
+    # push:
+    #     branches: [main]
+    #     paths-ignore:
+    #         - "docker/dokploy.production/compose.yaml"
+    #         - "docker/dokploy.staging/compose.yaml"
+    #         - ".github/workflows/ghcr-retention-policy.yaml"
+    #         - "README.md"
+    workflow_dispatch:
+
+jobs:
+    create-deployment:
+        permissions:
+            deployments: write
+        runs-on: blacksmith-2vcpu-ubuntu-2404
+        outputs:
+            deployment-id: ${{ steps.create-deployment.outputs.deployment_id }}
+        steps:
+            - name: Create deployment
+              id: create-deployment
+              uses: chrnorm/deployment-action@v2
+              with:
+                  token: "${{ github.token }}"
+                  environment: production
+            - name: Update deployment status `in_progress`
+              uses: chrnorm/deployment-status@v2
+              with:
+                  token: "${{ github.token }}"
+                  state: "in_progress"
+                  deployment-id: ${{ steps.create-deployment.outputs.deployment_id }}
+    build-all:
+        needs: [create-deployment]
+        uses: ./.github/workflows/build-all.yaml
+        with:
+            environment: production
+            image_tag: latest
+            telegram_chat_id: ${{ vars.TELEGRAM_CHAT_ID }}
+        secrets:
+            telegram_token: ${{ secrets.TELEGRAM_TOKEN }}
+    # deploy:
+    #   runs-on: blacksmith-2vcpu-ubuntu-2404
+    #   needs: [build-all]
+    #   steps:
+    #     - name: Deploy with Dokploy
+    #       uses: qbix-tech/dokploy-deploy-action@v1
+    #       with:
+    #         dokploy_url: ${{ vars.DOKPLOY_STAGING_URL }}
+    #         api_key: ${{ secrets.DOKPLOY_STAGING_API_KEY }}
+    #         type: compose
+    #         compose_id: ${{ vars.DOKPLOY_STAGING_COMPOSE_ID }}
+    update-deployment-failed:
+        permissions:
+            deployments: write
+        runs-on: blacksmith-2vcpu-ubuntu-2404
+        if: ${{ failure() }}
+        needs:
+            - create-deployment
+            - build-all
+            # - deploy
+        steps:
+            - name: Update deployment status `failure`
+              uses: chrnorm/deployment-status@v2
+              with:
+                  token: "${{ github.token }}"
+                  state: "failure"
+                  deployment-id: ${{ needs.create-deployment.outputs.deployment-id }}
+    update-deployment-success:
+        permissions:
+            deployments: write
+        runs-on: blacksmith-2vcpu-ubuntu-2404
+        if: ${{ success() }}
+        needs:
+            - create-deployment
+            - build-all
+            # - deploy
+        steps:
+            - name: Update deployment status `success`
+              uses: chrnorm/deployment-status@v2
+              with:
+                  token: "${{ github.token }}"
+                  state: "success"
+                  deployment-id: ${{ needs.create-deployment.outputs.deployment-id }}
