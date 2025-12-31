@@ -39,11 +39,13 @@ export default {
 	Link: "Link",
 	InvalidLinkMessage:
 		"The link is either invalid or expired. Please contact our management office for a new link.",
-	SubmittingAsUnit: "You are submitting this form as the unit {unit}.",
+	SubmittingAsUnit: "You are submitting this form as unit {unit}.",
 	IfThisIsNotYourUnitPleaseContactManagement:
-		"If this is not your unit, please contact management.",
+		"If this is not your unit, please contact the management office.",
 	VehiclesInformationUpdatedExpiredLink:
 		"Vehicles information updated. This link is now expired.",
 	VehiclesRegistration: "Vehicles Registration",
+	VehiclesRegistrationDescription:
+		"We are currently updating your vehicle records in preparation for the upcoming Automatic Number Plate Recognition (ANPR) system. Kindly provide the necessary vehicle details below.",
 	AddVehicle: "Add Vehicle",
 };

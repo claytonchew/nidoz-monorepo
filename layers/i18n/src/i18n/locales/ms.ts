@@ -41,9 +41,11 @@ export default {
 		"Pautan tersebut sama ada tidak sah atau telah tamat tempoh. Sila hubungi pejabat pengurusan kami untuk pautan baharu.",
 	SubmittingAsUnit: "Anda mewakili unit {unit}.",
 	IfThisIsNotYourUnitPleaseContactManagement:
-		"Jika ini bukan unit anda, sila hubungi pihak pengurusan.",
+		"Jika ini bukan unit anda, sila hubungi pihak pejabat pengurusan.",
 	VehiclesInformationUpdatedExpiredLink:
-		"Maklumat Kenderaan Dikemas Kini. Pautan ini kini telah tamat tempoh.",
+		"Maklumat kenderaan anda telah dikemas kini. Pautan ini telah tamat tempoh.",
 	VehiclesRegistration: "Pendaftaran Kenderaan",
+	VehiclesRegistrationDescription:
+		"Kami sedang mengemas kini rekod kenderaan anda sebagai persediaan untuk sistem Pengecaman Plat Nombor Automatik (ANPR) yang akan datang. Sila berikan butiran kenderaan yang diperlukan di bawah.",
 	AddVehicle: "Tambah Kenderaan",
 };

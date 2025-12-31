@@ -43,5 +43,7 @@ export default {
 		"如果这不是您的单位，请联系管理部门。",
 	VehiclesInformationUpdatedExpiredLink: "车辆信息已更新。此链接已失效。",
 	VehiclesRegistration: "车辆注册",
+	VehiclesRegistrationDescription:
+		"我们正在更新您的车辆记录，为即将推出的车牌自动识别（ANPR）系统做准备。请在下方提供必要的车辆详细信息。",
 	AddVehicle: "添加车辆",
 };
