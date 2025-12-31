@@ -159,7 +159,7 @@ export class VehicleQueries {
 					and(
 						eq($schema.unitOTP.type, $schema.UnitOTPType.VehicleManagement),
 						isNull($schema.unitOTP.revokedAt),
-						gt($schema.unitOTP.expiresAt, new Date()),
+						// gt($schema.unitOTP.expiresAt, new Date()),
 					),
 				);
 

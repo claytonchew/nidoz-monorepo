@@ -34,4 +34,5 @@ export default {
 	NumberPlate: "车牌号",
 	Model: "型号",
 	Color: "颜色",
+	ShareLink: "分享链接",
 };

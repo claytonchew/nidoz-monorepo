@@ -34,4 +34,5 @@ export default {
 	NumberPlate: "Number Plate",
 	Model: "Model",
 	Color: "Color",
+	ShareLink: "Share Link",
 };

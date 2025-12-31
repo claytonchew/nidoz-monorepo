@@ -34,4 +34,5 @@ export default {
 	NumberPlate: "Nombor Plat",
 	Model: "Model",
 	Color: "Warna",
+	ShareLink: "Kongsi Pautan",
 };

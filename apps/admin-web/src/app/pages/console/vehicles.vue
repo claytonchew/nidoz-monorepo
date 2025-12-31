@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import type { DropdownMenuProps } from "#ui/types";
-import { LazyModalVehicles } from "#components";
+import { LazyModalVehicles, LazyModalVehicleManagementLink } from "#components";
 
 useSeoMeta({
 	title: "Vehicles",
@@ -99,7 +99,10 @@ watchEffect(() => {
 });
 
 const overlay = useOverlay();
-const modalVehicle = overlay.create(LazyModalVehicles);
+const modalVehicles = overlay.create(LazyModalVehicles);
+const modalVehicleManagementLink = overlay.create(
+	LazyModalVehicleManagementLink,
+);
 
 const getActionItems = computed(
 	() =>
@@ -115,7 +118,7 @@ const getActionItems = computed(
 					label: "Edit Vehicles",
 					icon: "lucide:car-front",
 					onSelect: () => {
-						modalVehicle.open({
+						modalVehicles.open({
 							unit: `${row.original.block}-${row.original.floor}-${row.original.number}`,
 							onRefresh: () => {
 								refresh();
@@ -129,6 +132,14 @@ const getActionItems = computed(
 				{
 					label: "Share Link",
 					icon: "lucide:link-2",
+					onSelect: () => {
+						modalVehicleManagementLink.open({
+							unit: `${row.original.block}-${row.original.floor}-${row.original.number}`,
+							onRefresh: () => {
+								refresh();
+							},
+						});
+					},
 				},
 			];
 		},
