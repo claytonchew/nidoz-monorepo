@@ -187,7 +187,7 @@ export class VehicleQueries {
 			}
 
 			return {
-				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=${records[0].unitId}:${records[0].token}`,
+				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}/entry?type=v&token=${records[0].unitId}:${records[0].token}`,
 				expiresAt: records[0].expiresAt,
 			};
 		} catch (error) {
@@ -228,7 +228,7 @@ export class VehicleQueries {
 			}
 
 			return {
-				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=${record.unitId}:${record.token}`,
+				url: `${process.env.NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}/entry?type=v&token=${record.unitId}:${record.token}`,
 				expiresAt: record.expiresAt,
 			};
 		} catch (error) {

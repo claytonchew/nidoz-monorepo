@@ -1,4 +1,11 @@
 import { createTursoClient } from "@nidoz/database";
+import {
+	AdminOTPQueries,
+	AdminQueries,
+	UnitQueries,
+	UnitOTPQueries,
+	VehicleQueries,
+} from "@nidoz/database";
 
 let _db: ReturnType<typeof createTursoClient> | null = null;
 
@@ -16,3 +23,8 @@ export const useDB = () => {
 };
 
 export { $schema } from "@nidoz/database";
+export const adminQueries = new AdminQueries(useDB());
+export const adminOTPQueries = new AdminOTPQueries(useDB());
+export const unitQueries = new UnitQueries(useDB());
+export const unitOTPQueries = new UnitOTPQueries(useDB());
+export const vehicleQueries = new VehicleQueries(useDB());

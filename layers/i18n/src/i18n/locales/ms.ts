@@ -11,6 +11,7 @@ export default {
 	Welcome: "Selamat datang",
 	Successful: "Berjaya",
 	Unsuccessful: "Tidak Berjaya",
+	Unauthorized: "Tidak Dibenarkan",
 	InternalServerError: "Ralat Server Dalaman",
 	ValidationError: "Ralat Pengesahan",
 	InvalidCredentials: "Kelayakan tidak sah",
@@ -35,4 +36,12 @@ export default {
 	Model: "Model",
 	Color: "Warna",
 	ShareLink: "Kongsi Pautan",
+	Link: "Pautan",
+	InvalidLinkMessage:
+		"Pautan tersebut sama ada tidak sah atau telah tamat tempoh. Sila hubungi pejabat pengurusan kami untuk pautan baharu.",
+	SubmittingAsUnit: "Anda mewakili unit {unit}.",
+	IfThisIsNotYourUnitPleaseContactManagement:
+		"Jika ini bukan unit anda, sila hubungi pihak pengurusan.",
+	VehiclesInformationUpdatedExpiredLink:
+		"Maklumat Kenderaan Dikemas Kini. Pautan ini kini telah tamat tempoh.",
 };

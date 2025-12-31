@@ -168,7 +168,7 @@ describe("VehicleQueries", async () => {
 
 		expect(
 			link.url.startsWith(
-				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=`,
+				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}/entry?type=v&token=`,
 			),
 		).toBe(true);
 		expect(link.expiresAt).toBeInstanceOf(Date);
@@ -183,7 +183,7 @@ describe("VehicleQueries", async () => {
 
 		expect(
 			newLink.url.startsWith(
-				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_VEHICLE_MGMT_BASE_URL}/edit?token=`,
+				`${process.env.NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}/entry?type=v&token=`,
 			),
 		).toBe(true);
 		expect(newLink.expiresAt).toBeInstanceOf(Date);

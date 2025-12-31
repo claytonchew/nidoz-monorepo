@@ -421,6 +421,7 @@ export class UnitOTPQueries {
 				await this.update(
 					{ type, verifier: { id: record.id }, opts: { allowMultiple: false } },
 					{ revokedAt: new Date() },
+					tx,
 				);
 			}
 
@@ -528,7 +529,7 @@ export class UnitOTPQueries {
 		}
 
 		try {
-			return this.verify(
+			const result = await this.verify(
 				{
 					type: $schema.UnitOTPType.VehicleManagement,
 					verifier,
@@ -536,9 +537,11 @@ export class UnitOTPQueries {
 				},
 				tx,
 			);
+
+			return result;
 		} catch (error) {
-			console.error(error);
-			throw error;
+			console.warn(error);
+			return { result: false as const, record: null };
 		}
 	}
 

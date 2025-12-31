@@ -334,6 +334,7 @@ export class AdminOTPQueries {
 				await this.update(
 					{ type, verifier: { id: record.id }, opts: { allowMultiple: false } },
 					{ revokedAt: new Date() },
+					tx,
 				);
 			}
 
@@ -438,7 +439,7 @@ export class AdminOTPQueries {
 		}
 
 		try {
-			return this.verify(
+			const result = await this.verify(
 				{
 					type: $schema.AdminOTPType.Login,
 					verifier,
@@ -446,9 +447,11 @@ export class AdminOTPQueries {
 				},
 				tx,
 			);
+
+			return result;
 		} catch (error) {
-			console.error(error);
-			throw error;
+			console.warn(error);
+			return { result: false as const, record: null };
 		}
 	}
 

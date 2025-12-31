@@ -20,4 +20,31 @@ export default defineNuxtConfig({
 	],
 
 	modules: ["nuxt-auth-utils", "@nuxt/ui", "@vueuse/nuxt"],
+
+	runtimeConfig: {
+		public: {
+			nidoz: {
+				space: {
+					resident: {
+						baseUrl: "https://nidoz.space",
+					},
+					admin: {
+						baseUrl: "https://admin.nidoz.space",
+					},
+				},
+			},
+		},
+		internal: {
+			nidoz: {
+				space: {
+					resident: {
+						baseUrl: "http://resident-web:8000",
+					},
+					admin: {
+						baseUrl: "http://admin-web:80",
+					},
+				},
+			},
+		},
+	},
 });

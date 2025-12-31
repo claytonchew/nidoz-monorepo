@@ -11,6 +11,7 @@ export default {
 	Welcome: "欢迎",
 	Successful: "成功",
 	Unsuccessful: "不成功",
+	Unauthorized: "未授权",
 	InternalServerError: "内部服务器错误",
 	ValidationError: "验证错误",
 	InvalidCredentials: "无效的凭据",
@@ -35,4 +36,10 @@ export default {
 	Model: "型号",
 	Color: "颜色",
 	ShareLink: "分享链接",
+	Link: "链接",
+	InvalidLinkMessage: "链接已失效或过期，请联系我们的管理办公室获取新链接。",
+	SubmittingAsUnit: "您以单位{unit}的身份提交此表单。",
+	IfThisIsNotYourUnitPleaseContactManagement:
+		"如果这不是您的单位，请联系管理部门。",
+	VehiclesInformationUpdatedExpiredLink: "车辆信息已更新。此链接已失效。",
 };

@@ -17,18 +17,16 @@
 				>
 					<template #header>
 						<div class="flex items-center justify-between gap-2">
-							<span class="text-muted flex items-center gap-1">
-								<UBadge
-									class="flex items-center gap-1"
-									variant="subtle"
-									color="neutral"
-									icon="lucide:car-front"
-									size="lg"
-								>
-									<span>{{ t("Vehicle") }}</span>
-									<span>#{{ index + 1 }}</span>
-								</UBadge>
-							</span>
+							<UBadge
+								class="flex items-center gap-1"
+								variant="subtle"
+								color="neutral"
+								icon="lucide:car-front"
+								size="lg"
+							>
+								<span>{{ t("Vehicle") }}</span>
+								<span>#{{ index + 1 }}</span>
+							</UBadge>
 							<UButton
 								v-if="!props.disabled && !props.loading"
 								icon="lucide:trash"

@@ -106,6 +106,55 @@ importers:
         specifier: 'catalog:'
         version: 3.2.1(typescript@5.9.3)
 
+  apps/resident-web:
+    dependencies:
+      '@iconify-json/lucide':
+        specifier: ^1.2.60
+        version: 1.2.82
+      '@iconify-json/simple-icons':
+        specifier: ^1.2.46
+        version: 1.2.63
+      '@nidoz/base':
+        specifier: workspace:*
+        version: link:../../layers/base
+      '@nidoz/i18n':
+        specifier: workspace:*
+        version: link:../../layers/i18n
+      '@nidoz/ui':
+        specifier: workspace:*
+        version: link:../../layers/ui
+      '@nuxt/ui':
+        specifier: ^4.3.0
+        version: 4.3.0(f03f96a397c05ad07ff81ec13651f7d2)
+      '@vueuse/core':
+        specifier: ^14.1.0
+        version: 14.1.0(vue@3.5.26(typescript@5.9.3))
+      '@vueuse/nuxt':
+        specifier: ^14.1.0
+        version: 14.1.0(magicast@0.5.1)(nuxt@4.2.2(@biomejs/biome@2.3.10)(@libsql/client@0.15.15)(@parcel/watcher@2.5.1)(@types/node@25.0.3)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(@libsql/client@0.15.15)(drizzle-orm@0.45.1(@libsql/client@0.15.15)))(drizzle-orm@0.45.1(@libsql/client@0.15.15))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.1)(optionator@0.9.4)(rolldown@1.0.0-beta.45)(rollup@4.54.0)(terser@5.44.1)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.2.1(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
+      matcher:
+        specifier: ^6.0.0
+        version: 6.0.0
+      nuxt:
+        specifier: 'catalog:'
+        version: 4.2.2(@biomejs/biome@2.3.10)(@libsql/client@0.15.15)(@parcel/watcher@2.5.1)(@types/node@25.0.3)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(@libsql/client@0.15.15)(drizzle-orm@0.45.1(@libsql/client@0.15.15)))(drizzle-orm@0.45.1(@libsql/client@0.15.15))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.1)(optionator@0.9.4)(rolldown@1.0.0-beta.45)(rollup@4.54.0)(terser@5.44.1)(typescript@5.9.3)(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.2.1(typescript@5.9.3))(yaml@2.8.2)
+      nuxt-auth-utils:
+        specifier: ^0.5.26
+        version: 0.5.26(magicast@0.5.1)
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
+    devDependencies:
+      '@tanstack/vue-table':
+        specifier: ^8.21.3
+        version: 8.21.3(vue@3.5.26(typescript@5.9.3))
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vue-tsc:
+        specifier: 'catalog:'
+        version: 3.2.1(typescript@5.9.3)
+
   layers/base:
     dependencies:
       '@nidoz/database':

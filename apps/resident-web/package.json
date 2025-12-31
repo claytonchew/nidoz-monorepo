@@ -1,0 +1,31 @@
+{
+	"name": "@nidoz/resident-web",
+	"private": true,
+	"type": "module",
+	"main": "./nuxt.config.ts",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare"
+	},
+	"dependencies": {
+		"@iconify-json/lucide": "^1.2.60",
+		"@iconify-json/simple-icons": "^1.2.46",
+		"@nidoz/base": "workspace:*",
+		"@nidoz/i18n": "workspace:*",
+		"@nidoz/ui": "workspace:*",
+		"@nuxt/ui": "^4.3.0",
+		"@vueuse/core": "^14.1.0",
+		"@vueuse/nuxt": "^14.1.0",
+		"matcher": "^6.0.0",
+		"nuxt": "catalog:",
+		"nuxt-auth-utils": "^0.5.26",
+		"zod": "^4.2.1"
+	},
+	"devDependencies": {
+		"@tanstack/vue-table": "^8.21.3",
+		"typescript": "catalog:",
+		"vue-tsc": "catalog:"
+	}
+}
