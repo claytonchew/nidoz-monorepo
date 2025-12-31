@@ -1,0 +1,101 @@
+name: "nidoz-space-production"
+
+services:
+    admin-web-xaox1z1:
+        build:
+            context: ../../
+            dockerfile: docker/builds/Dockerfile
+            target: admin-web
+        depends_on:
+            database-manager-xaox1z1:
+                condition: service_completed_successfully
+            turso-xaox1z1:
+                condition: service_healthy
+        expose:
+            - 80
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.nidoz-space-prod-admin-web-xaox1z1.rule=Host(`${ADMIN_WEB_DOMAIN:?err}`)
+            - traefik.http.routers.nidoz-space-prod-admin-web-xaox1z1.entrypoints=websecure
+            - traefik.http.routers.nidoz-space-prod-admin-web-xaox1z1.tls.certResolver=letsencrypt
+            - traefik.http.services.nidoz-space-prod-admin-web-xaox1z1.loadbalancer.server.port=80
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://admin-web-xaox1z1:80/healthz"]
+            interval: 30s
+            timeout: 20s
+            retries: 3
+        restart: unless-stopped
+        environment:
+            - NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_PUBLIC_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL}
+            - NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD:?err}
+            - TURSO_CONNECTION_URL=${TURSO_CONNECTION_URL:?err}
+            - TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN:?err}
+            - DATABASE_ENABLE_SEED_TEST_DATA=${DATABASE_ENABLE_SEED_TEST_DATA:-false}
+
+    resident-web-xaox1z1:
+        build:
+            context: ../../
+            dockerfile: docker/builds/Dockerfile
+            target: resident-web
+        depends_on:
+            database-manager-xaox1z1:
+                condition: service_completed_successfully
+            turso-xaox1z1:
+                condition: service_healthy
+        expose:
+            - 80
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.nidoz-space-prod-resident-web-xaox1z1.rule=Host(`${RESIDENT_WEB_DOMAIN:?err}`)
+            - traefik.http.routers.nidoz-space-prod-resident-web-xaox1z1.entrypoints=websecure
+            - traefik.http.routers.nidoz-space-prod-resident-web-xaox1z1.tls.certResolver=letsencrypt
+            - traefik.http.services.nidoz-space-prod-resident-web-xaox1z1.loadbalancer.server.port=80
+        healthcheck:
+            test:
+                ["CMD", "curl", "-f", "http://resident-web-xaox1z1:80/healthz"]
+            interval: 30s
+            timeout: 20s
+            retries: 3
+        restart: unless-stopped
+        environment:
+            - NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_PUBLIC_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL}
+            - NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD:?err}
+            - TURSO_CONNECTION_URL=${TURSO_CONNECTION_URL:?err}
+            - TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN:?err}
+            - DATABASE_ENABLE_SEED_TEST_DATA=${DATABASE_ENABLE_SEED_TEST_DATA:-false}
+
+    database-manager-xaox1z1:
+        build:
+            context: ../../
+            dockerfile: docker/builds/Dockerfile
+            target: database-manager
+        depends_on:
+            turso-xaox1z1:
+                condition: service_healthy
+        environment:
+            - NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_PUBLIC_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_PUBLIC_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_RESIDENT_BASE_URL}
+            - NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL=${NUXT_INTERNAL_NIDOZ_SPACE_ADMIN_BASE_URL}
+            - NUXT_SESSION_PASSWORD=${NUXT_SESSION_PASSWORD:?err}
+            - TURSO_CONNECTION_URL=${TURSO_CONNECTION_URL:?err}
+            - TURSO_AUTH_TOKEN=${TURSO_AUTH_TOKEN:?err}
+            - DATABASE_ENABLE_SEED_TEST_DATA=${DATABASE_ENABLE_SEED_TEST_DATA:-false}
+
+    turso-xaox1z1:
+        image: ghcr.io/tursodatabase/libsql-server:v0.24.33
+        volumes:
+            - ../../../.dockerVolume/libsql:/var/lib/sqld
+        environment:
+            - SQLD_NODE=primary
+            - SQLD_HTTP_AUTH=${TURSO_AUTH_TOKEN:-basic:YXBwOks1VmhhbnVxUkFPRU9Pa09TRHNJM1BMU1JQZlFNRXVr}
+        ports:
+            - "${TURSO_HTTP_PORT:-36100}:8080"
+            - "${TURSO_GRPC_PORT:-36101}:5001"
+        restart: always
