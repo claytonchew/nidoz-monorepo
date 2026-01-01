@@ -51,7 +51,7 @@ const { data, status, error, refresh } = await useAPI("/api/vehicle", {
 	},
 });
 
-const form = templateRef("form");
+const form = useTemplateRef("form");
 const loading = ref(false);
 
 const onSubmit = async (

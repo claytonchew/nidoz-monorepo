@@ -15,6 +15,7 @@
 		"@nidoz/base": "workspace:*",
 		"@nidoz/i18n": "workspace:*",
 		"@nidoz/ui": "workspace:*",
+		"@nidoz/utils": "workspace:*",
 		"@nuxt/ui": "^4.3.0",
 		"@vueuse/core": "^14.1.0",
 		"@vueuse/nuxt": "^14.1.0",

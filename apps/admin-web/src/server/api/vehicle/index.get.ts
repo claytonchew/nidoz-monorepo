@@ -13,6 +13,14 @@ export default defineAPIEventHandler(async (event) => {
 		vehicleQueries.getAllByUnit(unit),
 	]);
 
+	if (!unitData) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: "Not Found",
+			message: `Unit ${unit} not found`,
+		});
+	}
+
 	return {
 		unit: unitData,
 		vehicles: vehiclesData,

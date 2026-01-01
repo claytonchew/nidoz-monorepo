@@ -1,9 +1,10 @@
-import { createTursoClient } from "@nidoz/database";
 import {
 	AdminOTPQueries,
 	AdminQueries,
-	UnitQueries,
+	createTursoClient,
+	LuckyDrawQueries,
 	UnitOTPQueries,
+	UnitQueries,
 	VehicleQueries,
 } from "@nidoz/database";
 
@@ -28,3 +29,4 @@ export const adminOTPQueries = new AdminOTPQueries(useDB());
 export const unitQueries = new UnitQueries(useDB());
 export const unitOTPQueries = new UnitOTPQueries(useDB());
 export const vehicleQueries = new VehicleQueries(useDB());
+export const luckyDrawQueries = new LuckyDrawQueries(useDB());

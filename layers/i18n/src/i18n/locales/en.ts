@@ -48,4 +48,16 @@ export default {
 	VehiclesRegistrationDescription:
 		"We are currently updating your vehicle records in preparation for the upcoming Automatic Number Plate Recognition (ANPR) system. Kindly provide the necessary vehicle details below.",
 	AddVehicle: "Add Vehicle",
+	UnitNumber: "Unit Number",
+	UnitNumberDescription:
+		"Enter your unit number with the following format: 'A-08-01'",
+	Name: "Name",
+	PhoneNumber: "Phone Number",
+	PleaseEnsureYouEnteredValidUnitNumber:
+		"Please ensure you entered a valid unit number, i.e. 'A-08-01'",
+	LuckyDrawDescription:
+		"Register with the following information to join the lucky draw.",
+	LuckyDrawRegistrationCompletedMessage:
+		"You have sucessfully registered an entry to the lucky draw.",
+	Okay: "Okay",
 };

@@ -73,7 +73,7 @@ const props = defineProps<{
 	onSubmitHandler: (event: FormSubmitEvent<Schema>) => void | Promise<void>;
 }>();
 
-const form = templateRef("form");
+const form = useTemplateRef("form");
 
 const schema = z.object({
 	vehicles: z

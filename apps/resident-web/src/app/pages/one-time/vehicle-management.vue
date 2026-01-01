@@ -101,7 +101,7 @@ const { data, status, error, refresh } = await useAPI(
 	{ method: "GET" },
 );
 
-const form = templateRef("form");
+const form = useTemplateRef("form");
 const loading = ref(false);
 const showSuccess = ref(false);
 const postSuccessResults = ref<

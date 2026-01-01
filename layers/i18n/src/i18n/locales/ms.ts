@@ -48,4 +48,16 @@ export default {
 	VehiclesRegistrationDescription:
 		"Kami sedang mengemas kini rekod kenderaan anda sebagai persediaan untuk sistem Pengecaman Plat Nombor Automatik (ANPR) yang akan datang. Sila berikan butiran kenderaan yang diperlukan di bawah.",
 	AddVehicle: "Tambah Kenderaan",
+	UnitNumber: "Nombor Unit",
+	UnitNumberDescription:
+		"Masukkan nombor unit anda dengan format berikut: 'A-08-01'",
+	Name: "Nama",
+	PhoneNumber: "Nombor Telefon",
+	PleaseEnsureYouEnteredValidUnitNumber:
+		"Sila pastikan anda memasukkan nombor unit yang sah, contohnya 'A-08-01'",
+	LuckyDrawDescription:
+		"Daftar dengan maklumat berikut untuk menyertai cabutan bertuah.",
+	LuckyDrawRegistrationCompletedMessage:
+		"Anda telah berjaya mendaftar untuk cabutan bertuah.",
+	Okay: "Baik",
 };

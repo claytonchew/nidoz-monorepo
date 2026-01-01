@@ -61,7 +61,7 @@ export class LuckyDrawQueries {
 			page = 1,
 			pageSize = 20,
 			search = "",
-			sort = "asc",
+			sort = "desc",
 		}: {
 			page?: number;
 			pageSize?: number;
@@ -210,7 +210,7 @@ export class LuckyDrawQueries {
 			page = 1,
 			pageSize = 20,
 			search = "",
-			sort = "asc",
+			sort = "desc",
 		}: {
 			luckyDrawId: string;
 			page?: number;
@@ -269,8 +269,10 @@ export class LuckyDrawQueries {
 				.offset(offset)
 				.$dynamic();
 			let totalCountQuery = db
+				.with(unitQuery)
 				.select({ count: count($schema.luckyDrawEntry.unitId) })
 				.from($schema.luckyDrawEntry)
+				.innerJoin(unitQuery, eq($schema.luckyDrawEntry.unitId, unitQuery.id))
 				.$dynamic();
 
 			const conditions: any[] = [
@@ -281,9 +283,9 @@ export class LuckyDrawQueries {
 					const unit = parseResidentialUnit(search.trim());
 					conditions.push(
 						and(
-							eq($schema.unit.block, unit.block),
-							eq($schema.unit.floor, unit.floor),
-							eq($schema.unit.number, unit.number),
+							eq(unitQuery.block, unit.block),
+							eq(unitQuery.floor, unit.floor),
+							eq(unitQuery.number, unit.number),
 						),
 					);
 				} catch {

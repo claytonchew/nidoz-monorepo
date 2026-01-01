@@ -22,6 +22,14 @@ export const useConsole = () => {
 					open.value = false;
 				},
 			},
+			{
+				label: "Lucky Draws",
+				icon: "lucide:gift",
+				to: "/console/lucky-draws",
+				onSelect: () => {
+					open.value = false;
+				},
+			},
 		],
 	] satisfies NavigationMenuItem[][];
 

@@ -46,4 +46,13 @@ export default {
 	VehiclesRegistrationDescription:
 		"我们正在更新您的车辆记录，为即将推出的车牌自动识别（ANPR）系统做准备。请在下方提供必要的车辆详细信息。",
 	AddVehicle: "添加车辆",
+	UnitNumber: "单位编号",
+	UnitNumberDescription: "请输入您的单位编号，格式如下：'A-08-01'",
+	Name: "名称",
+	PhoneNumber: "电话号码",
+	PleaseEnsureYouEnteredValidUnitNumber:
+		"请确保您输入了有效的单位编号，例如 'A-08-01'",
+	LuckyDrawDescription: "使用以下信息注册以参加抽奖活动。",
+	LuckyDrawRegistrationCompletedMessage: "您已成功注册抽奖活动的参赛资格。",
+	Okay: "好的",
 };
