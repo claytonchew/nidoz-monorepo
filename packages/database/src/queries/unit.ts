@@ -20,7 +20,6 @@ import type {
 	DrizzleTursoTransaction,
 } from "../module/client";
 import * as $schema from "../schema";
-import type { Paginated } from "./types";
 import { constructCommonQueries } from "./utils";
 
 export interface UnitQueries
