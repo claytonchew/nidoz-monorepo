@@ -8,6 +8,13 @@
 			"when": 1767002846874,
 			"tag": "20251229100726_striped_rumiko_fujikawa",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1767252372289,
+			"tag": "20260101072612_kind_slipstream",
+			"breakpoints": true
 		}
 	]
 }

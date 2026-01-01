@@ -1,5 +1,10 @@
 import { createId } from "@paralleldrive/cuid2";
-import { index, sqliteTable, unique } from "drizzle-orm/sqlite-core";
+import {
+	index,
+	primaryKey,
+	sqliteTable,
+	unique,
+} from "drizzle-orm/sqlite-core";
 
 export const AdminStatus = {
 	Active: "ACTIVE",
@@ -136,4 +141,51 @@ export const vehicle = sqliteTable(
 		index("idx_vehicle_created_at").on(table.unitId),
 		index("idx_vehicle_unit_id").on(table.unitId),
 	],
+);
+
+export const luckyDraw = sqliteTable("lucky_draw", (t) => ({
+	id: t
+		.text()
+		.primaryKey()
+		.$default(() => createId()),
+	createdAt: t
+		.integer({ mode: "timestamp" })
+		.notNull()
+		.$default(() => new Date()),
+	updatedAt: t
+		.integer({ mode: "timestamp" })
+		.notNull()
+		.$default(() => new Date())
+		.$onUpdate(() => new Date()),
+	name: t.text().notNull(),
+}));
+
+export const luckyDrawEntry = sqliteTable(
+	"lucky_draw_entry",
+	(t) => ({
+		luckyDrawId: t
+			.text()
+			.references(() => luckyDraw.id, {
+				onUpdate: "cascade",
+				onDelete: "cascade",
+			})
+			.notNull(),
+		unitId: t
+			.text()
+			.references(() => unit.id, { onUpdate: "cascade", onDelete: "cascade" })
+			.notNull(),
+		createdAt: t
+			.integer({ mode: "timestamp" })
+			.notNull()
+			.$default(() => new Date()),
+		updatedAt: t
+			.integer({ mode: "timestamp" })
+			.notNull()
+			.$default(() => new Date())
+			.$onUpdate(() => new Date()),
+		name: t.text(),
+		email: t.text(),
+		phoneNumber: t.text(),
+	}),
+	(table) => [primaryKey({ columns: [table.luckyDrawId, table.unitId] })],
 );
