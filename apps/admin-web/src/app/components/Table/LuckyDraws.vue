@@ -154,7 +154,7 @@ const sort = ref([
 
 function constructRegistrationLink(id: string) {
 	const baseUrl = useRuntimeConfig().public.nidoz.space.resident.baseUrl;
-	return `${baseUrl}/luck-draw/register/${id}`;
+	return `${baseUrl}/lucky-draw/register/${id}`;
 }
 
 function constructDrawLink(id: string) {
