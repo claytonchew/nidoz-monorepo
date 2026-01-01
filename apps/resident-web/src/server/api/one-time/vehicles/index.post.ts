@@ -68,15 +68,6 @@ export default defineAPIEventHandler(async (event, { t }) => {
 		});
 	}
 
-	// just to set up the type guard (won't happen in practice)
-	if (Array.isArray(unitRecord)) {
-		throw createError({
-			statusCode: 500,
-			statusMessage: "Internal Server Error",
-			message: `Expected unit record to be a single object`,
-		});
-	}
-
 	const records = await useDB().transaction(async (tx) => {
 		const results = await vehicleQueries.upsertMultiple(
 			unitRecord.id,
