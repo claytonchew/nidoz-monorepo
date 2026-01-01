@@ -125,6 +125,9 @@ describe("LuckyDrawQueries", async () => {
 		expect(
 			luckyDrawResults.records.find((r) => r.id === "lucky-draw-2")?.entries,
 		).toBe(3);
+		expect(
+			luckyDrawResults.records.find((r) => r.id === "lucky-draw-3")?.entries,
+		).toBe(0);
 
 		const luckyDrawEntriesResults = await luckyDrawQueries.getAllEntries({
 			luckyDrawId: "lucky-draw-2",
@@ -136,6 +139,22 @@ describe("LuckyDrawQueries", async () => {
 				luckyDraw2Entries.map((e) => e.unitId).includes(r.id),
 			),
 		);
+	});
+
+	it("should return a lucky draw record with entries", async () => {
+		const record = await luckyDrawQueries.getWithEntriesCount("lucky-draw-1");
+
+		expect(record).toHaveProperty("id", "lucky-draw-1");
+		expect(record).toHaveProperty("entries");
+		expect(record!.entries).toBe(1);
+	});
+
+	it("should return a lucky draw record with entries is `0` if there's no entry", async () => {
+		const record = await luckyDrawQueries.getWithEntriesCount("lucky-draw-3");
+
+		expect(record).toHaveProperty("id", "lucky-draw-3");
+		expect(record).toHaveProperty("entries");
+		expect(record!.entries).toBe(0);
 	});
 
 	it("should pick random from entries", async () => {

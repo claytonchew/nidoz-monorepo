@@ -25,6 +25,37 @@ export class LuckyDrawQueries {
 		Object.assign(this, constructCommonQueries(this.$db, $schema.luckyDraw));
 	}
 
+	async getWithEntriesCount(id: string, tx?: DrizzleTursoTransaction) {
+		const db = tx ?? this.$db;
+		try {
+			const entryCountQuery = db.$with("entry_count_query").as(
+				db
+					.select({
+						id: $schema.luckyDrawEntry.luckyDrawId,
+						entries: count($schema.luckyDrawEntry.unitId).as("entries"),
+					})
+					.from($schema.luckyDrawEntry)
+					.groupBy($schema.luckyDrawEntry.luckyDrawId),
+			);
+
+			const [record] = await db
+				.with(entryCountQuery)
+				.select({
+					...getTableColumns($schema.luckyDraw),
+					entries: sql<number>`CASE WHEN ${entryCountQuery.entries} THEN ${entryCountQuery.entries} ELSE 0 END`,
+				})
+				.from($schema.luckyDraw)
+				.leftJoin(entryCountQuery, eq($schema.luckyDraw.id, entryCountQuery.id))
+				.where(eq($schema.luckyDraw.id, id))
+				.limit(1);
+
+			return record ?? null;
+		} catch (error) {
+			console.error(error);
+			return null;
+		}
+	}
+
 	async getAll(
 		{
 			page = 1,
@@ -57,7 +88,7 @@ export class LuckyDrawQueries {
 				.with(entryCountQuery)
 				.select({
 					...getTableColumns($schema.luckyDraw),
-					entries: entryCountQuery.entries,
+					entries: sql<number>`CASE WHEN ${entryCountQuery.entries} THEN ${entryCountQuery.entries} ELSE 0 END`,
 				})
 				.from($schema.luckyDraw)
 				.leftJoin(entryCountQuery, eq($schema.luckyDraw.id, entryCountQuery.id))
