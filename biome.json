@@ -77,16 +77,16 @@
 		"ignoreUnknown": true,
 		"includes": [
 			"**",
-			"!**/node_modules",
-			"!**/dist",
-			"!**/tmp",
-			"!**/out-tsc",
-			"!**/out",
-			"!**/.output",
-			"!**/.data",
-			"!**/.cache",
-			"!**/.source",
-			"!**/.nx"
+			"!!**/node_modules",
+			"!!**/dist",
+			"!!**/tmp",
+			"!!**/out-tsc",
+			"!!**/out",
+			"!!**/.output",
+			"!!**/.data",
+			"!!**/.cache",
+			"!!**/.source",
+			"!!**/.nx"
 		]
 	}
 }
