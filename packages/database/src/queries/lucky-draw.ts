@@ -6,7 +6,7 @@ import {
 	desc,
 	eq,
 	getTableColumns,
-	ilike,
+	like,
 	or,
 	sql,
 } from "drizzle-orm";
@@ -110,7 +110,7 @@ export class LuckyDrawQueries {
 				conditions.push(
 					or(
 						eq($schema.luckyDraw.id, search),
-						ilike($schema.luckyDraw.name, `%${search}%`),
+						like($schema.luckyDraw.name, `%${search}%`),
 					),
 				);
 			}
