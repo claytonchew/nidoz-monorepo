@@ -10,6 +10,7 @@ import {
 	or,
 	sql,
 } from "drizzle-orm";
+import { toSnakeCase } from "drizzle-orm/casing";
 import type {
 	DrizzleTursoClient,
 	DrizzleTursoTransaction,
@@ -127,9 +128,15 @@ export class LuckyDrawQueries {
 						$schema.luckyDrawEntry.unitId,
 					],
 					set: {
-						name: data.name,
-						email: data.email,
-						phoneNumber: data.phoneNumber,
+						name: sql.raw(
+							`CASE WHEN excluded.${toSnakeCase($schema.luckyDrawEntry.name.name)} IS NOT NULL THEN excluded.${toSnakeCase($schema.luckyDrawEntry.name.name)} ELSE ${toSnakeCase($schema.luckyDrawEntry.name.name)} END`,
+						),
+						email: sql.raw(
+							`CASE WHEN excluded.${toSnakeCase($schema.luckyDrawEntry.email.name)} IS NOT NULL THEN excluded.${toSnakeCase($schema.luckyDrawEntry.email.name)} ELSE ${toSnakeCase($schema.luckyDrawEntry.email.name)} END`,
+						),
+						phoneNumber: sql.raw(
+							`CASE WHEN excluded.${toSnakeCase($schema.luckyDrawEntry.phoneNumber.name)} IS NOT NULL THEN excluded.${toSnakeCase($schema.luckyDrawEntry.phoneNumber.name)} ELSE ${toSnakeCase($schema.luckyDrawEntry.phoneNumber.name)} END`,
+						),
 					},
 				})
 				.returning();
@@ -218,6 +225,7 @@ export class LuckyDrawQueries {
 					phoneNumber: $schema.luckyDrawEntry.phoneNumber,
 					createdAt: $schema.luckyDrawEntry.createdAt,
 					updatedAt: $schema.luckyDrawEntry.updatedAt,
+					luckyDrawId: $schema.luckyDrawEntry.luckyDrawId,
 				})
 				.from($schema.luckyDrawEntry)
 				.innerJoin(unitQuery, eq($schema.luckyDrawEntry.unitId, unitQuery.id))
@@ -277,6 +285,49 @@ export class LuckyDrawQueries {
 				page,
 				pageSize,
 			};
+		}
+	}
+
+	async pickRandomFromEntries(
+		luckyDrawId: string,
+		tx?: DrizzleTursoTransaction,
+	) {
+		const db = tx ?? this.$db;
+		try {
+			const unitQuery = db.$with("unit_query").as(
+				db
+					.select({
+						...getTableColumns($schema.unit),
+						unit: sql<string>`block || '-' || floor || '-' || number`.as(
+							"unit",
+						),
+					})
+					.from($schema.unit),
+			);
+			const [record] = await db
+				.with(unitQuery)
+				.select({
+					id: unitQuery.id,
+					block: unitQuery.block,
+					floor: unitQuery.floor,
+					number: unitQuery.number,
+					unit: unitQuery.unit,
+					name: $schema.luckyDrawEntry.name,
+					email: $schema.luckyDrawEntry.email,
+					phoneNumber: $schema.luckyDrawEntry.phoneNumber,
+					createdAt: $schema.luckyDrawEntry.createdAt,
+					updatedAt: $schema.luckyDrawEntry.updatedAt,
+					luckyDrawId: $schema.luckyDrawEntry.luckyDrawId,
+				})
+				.from($schema.luckyDrawEntry)
+				.innerJoin(unitQuery, eq($schema.luckyDrawEntry.unitId, unitQuery.id))
+				.where(eq($schema.luckyDrawEntry.luckyDrawId, luckyDrawId))
+				.orderBy(sql`RANDOM()`)
+				.limit(1);
+			return record;
+		} catch (error) {
+			console.error(error);
+			throw error;
 		}
 	}
 }

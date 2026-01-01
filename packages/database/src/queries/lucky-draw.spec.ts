@@ -55,12 +55,14 @@ describe("LuckyDrawQueries", async () => {
 			unitId: unit!.id,
 			name: "Clayton Chew",
 			email: "me@claytonchew.com",
+			phoneNumber: "+60123456789",
 		});
 
 		expect(entry).toHaveProperty("luckyDrawId", "lucky-draw-1");
 		expect(entry).toHaveProperty("unitId", unit!.id);
 		expect(entry).toHaveProperty("name", "Clayton Chew");
 		expect(entry).toHaveProperty("email", "me@claytonchew.com");
+		expect(entry).toHaveProperty("phoneNumber", "+60123456789");
 	});
 
 	it("should not create new entry if unit exist", async () => {
@@ -76,6 +78,7 @@ describe("LuckyDrawQueries", async () => {
 		expect(entry).toHaveProperty("unitId", unit!.id);
 		expect(entry).toHaveProperty("name", "Vannesa Lim");
 		expect(entry).toHaveProperty("email", "vannesa@localhost");
+		expect(entry).toHaveProperty("phoneNumber", "+60123456789");
 
 		const check = await $db
 			.select({ count: count($schema.luckyDrawEntry.unitId) })
@@ -133,5 +136,51 @@ describe("LuckyDrawQueries", async () => {
 				luckyDraw2Entries.map((e) => e.unitId).includes(r.id),
 			),
 		);
+	});
+
+	it("should pick random from entries", async () => {
+		// generate unit numbers programmatically for multiple floors
+		const floors = [
+			"A-08",
+			"A-09",
+			"A-10",
+			"A-11",
+			"A-12",
+			"A-13",
+			"A-13A",
+			"A-15",
+			"A-16",
+			"A-17",
+			"A-18",
+			"A-19",
+			"A-20",
+		];
+		const entries: { unitId: string }[] = [];
+		for (const floor of floors) {
+			for (let i = 1; i <= 10; i++) {
+				let unitNum = i < 10 ? `0${i}` : `${i}`;
+				if (unitNum === "04") {
+					unitNum = "3A"; // special case for unit 04
+				}
+				const unitId = (await unitQueries.getByUnit(`${floor}-${unitNum}`))?.id;
+				if (unitId) {
+					entries.push({ unitId });
+				}
+			}
+		}
+		for (const entry of entries) {
+			await luckyDrawQueries.createEntry({
+				luckyDrawId: "lucky-draw-3",
+				...entry,
+			});
+		}
+
+		const winner = await luckyDrawQueries.pickRandomFromEntries("lucky-draw-3");
+		expect(winner).toHaveProperty("luckyDrawId", "lucky-draw-3");
+
+		// it should pick different winner on subsequent calls
+		expect(
+			await luckyDrawQueries.pickRandomFromEntries("lucky-draw-3"),
+		).not.toStrictEqual(winner);
 	});
 });
