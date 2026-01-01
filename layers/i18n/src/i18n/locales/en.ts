@@ -55,6 +55,7 @@ export default {
 	PhoneNumber: "Phone Number",
 	PleaseEnsureYouEnteredValidUnitNumber:
 		"Please ensure you entered a valid unit number, i.e. 'A-08-01'",
+	LuckyDraw: "Lucky Draw",
 	LuckyDrawDescription:
 		"Register with the following information to join the lucky draw.",
 	LuckyDrawRegistrationCompletedMessage:

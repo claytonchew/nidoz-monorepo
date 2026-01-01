@@ -57,6 +57,12 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
+useSeoMeta({
+	title: t("LuckyDraw"),
+});
+
 const { data, error, status, refresh } = useAPI("/api/lucky-draw", {
 	method: "GET",
 	query: { id: useRoute().params.id },

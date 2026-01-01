@@ -52,6 +52,7 @@ export default {
 	PhoneNumber: "电话号码",
 	PleaseEnsureYouEnteredValidUnitNumber:
 		"请确保您输入了有效的单位编号，例如 'A-08-01'",
+	LuckyDraw: "抽奖活动",
 	LuckyDrawDescription: "使用以下信息注册以参加抽奖活动。",
 	LuckyDrawRegistrationCompletedMessage: "您已成功注册抽奖活动的参赛资格。",
 	Okay: "好的",

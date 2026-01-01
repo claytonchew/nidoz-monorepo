@@ -55,6 +55,7 @@ export default {
 	PhoneNumber: "Nombor Telefon",
 	PleaseEnsureYouEnteredValidUnitNumber:
 		"Sila pastikan anda memasukkan nombor unit yang sah, contohnya 'A-08-01'",
+	LuckyDraw: "Cabutan Bertuah",
 	LuckyDrawDescription:
 		"Daftar dengan maklumat berikut untuk menyertai cabutan bertuah.",
 	LuckyDrawRegistrationCompletedMessage:
